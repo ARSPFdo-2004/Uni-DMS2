@@ -95,7 +95,8 @@ include 'includes/header.php';
     <div class="container">
         <p class="eyebrow">Universities</p>
         <h1>Universities in Sri Lanka</h1>
-        <p class="page-hero-meta">Filter by stream, location, and vibe to find the campus that guides your future.</p>
+        <p class="page-hero-meta">Universities in Sri Lanka provide competitive, high-quality education that shapes skilled professionals and drives national development.
+</p>
         <div class="breadcrumb">
             <a href="index.php">Home</a>
             <span>/</span>
@@ -111,10 +112,10 @@ include 'includes/header.php';
                 <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 <input
                     type="search"
-                    id="searchInput"
+                    id="uniSearchInput"
                     name="search"
                     class="search-input"
-                    placeholder="Search 'Engineering'..."
+                    placeholder="Search universities (e.g. 'Colombo', 'Peradeniya')..."
                     value="<?php echo htmlspecialchars($searchTerm); ?>">
             </div>
         </form>

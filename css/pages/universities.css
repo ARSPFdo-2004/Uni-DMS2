@@ -1,3 +1,13 @@
+/* Prevent navbar overlap on hero section */
+.page-hero {
+    padding-top: 10rem !important; /* bring text down */
+    min-height: 350px !important;  /* make hero smaller in height */
+    padding-bottom: 4rem !important;
+}
+
+.page-hero .container {
+    margin-top: 0;
+}
 /* Universities listing styles */
 .university-grid {
     display: grid;
