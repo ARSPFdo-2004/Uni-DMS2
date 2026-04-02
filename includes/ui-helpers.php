@@ -11,7 +11,11 @@
  */
 function getUniversityImagePath($university) {
     if (!empty($university['image_url'])) {
-        return htmlspecialchars($university['image_url']);
+        return $university['image_url'];
+    }
+    
+    if (!empty($university['image'])) {
+        return $university['image'];
     }
     
     // Check if an image exists in the uploads folder based on ID

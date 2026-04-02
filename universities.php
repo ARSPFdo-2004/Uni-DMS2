@@ -87,8 +87,6 @@ $rankedIds = array_map(function ($item) {
     return $item['id'];
 }, array_slice($universities, 0, 2));
 
-$streamChips = ['All', 'Physical Science', 'Bio Science', 'Commerce', 'Arts', 'Technology'];
-
 include 'includes/header.php';
 ?>
 <section class="page-hero reveal-on-scroll" aria-label="Universities hero">
@@ -119,18 +117,6 @@ include 'includes/header.php';
                     value="<?php echo htmlspecialchars($searchTerm); ?>">
             </div>
         </form>
-        <div class="filter-chips" role="tablist" aria-label="Stream filters">
-            <?php foreach ($streamChips as $chip): ?>
-                <button type="button" class="filter-chip<?php echo $chip === 'All' ? ' is-active' : ''; ?>" data-filter="<?php echo htmlspecialchars($chip); ?>" aria-pressed="<?php echo $chip === 'All' ? 'true' : 'false'; ?>">
-                    <?php echo htmlspecialchars($chip); ?>
-                </button>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<section class="section-shell" aria-label="University directory">
-    <div class="container">
         <?php if ($universities): ?>
             <div class="university-grid">
                 <?php foreach ($universities as $university): ?>
@@ -144,7 +130,11 @@ include 'includes/header.php';
                             <?php endif; ?>
                             <div class="image-overlay">
                                 <div class="location-tag"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> <?php echo htmlspecialchars(getUniversityLocation($university)); ?></div>
-                                <span class="type-badge type-<?php echo strtolower($university['type']); ?>"><?php echo htmlspecialchars($university['type']); ?></span>
+                                <?php if (!empty($university['type'])): ?>
+                                    <span class="type-badge type-<?php echo strtolower($university['type']); ?>"><?php echo htmlspecialchars($university['type']); ?></span>
+                                <?php else: ?>
+                                    <span class="type-badge type-government">Government</span>
+                                <?php endif; ?>
                                 <div class="university-name"><?php echo htmlspecialchars($university['name']); ?></div>
                             </div>
                         </div>
@@ -166,7 +156,7 @@ include 'includes/header.php';
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <p class="no-results">No universities match that search yet — try another keyword or chip.</p>
+            <p class="no-results">No universities match that search yet — try another keyword.</p>
         <?php endif; ?>
 
         <?php if ($totalPages > 1): ?>

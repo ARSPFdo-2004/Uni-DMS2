@@ -6,7 +6,6 @@ const App = (() => {
         initScrollReveal();
         initHeroStats();
         initHeroScroll();
-        initFilterChips();
         initFinderControls();
         initSearchPlaceholder();
         initThemeToggle();
@@ -133,33 +132,6 @@ const App = (() => {
             if (target) {
                 target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
             }
-        });
-    };
-
-    const initFilterChips = () => {
-        const chips = Array.from(document.querySelectorAll('.filter-chip'));
-        if (!chips.length) {
-            return;
-        }
-        const cards = Array.from(document.querySelectorAll('.university-card'));
-
-        const applyFilter = (chip) => {
-            const value = chip.dataset.filter || 'All';
-            chips.forEach((item) => {
-                const isActive = item === chip;
-                item.classList.toggle('is-active', isActive);
-                item.setAttribute('aria-pressed', isActive);
-            });
-            const normalized = value.toLowerCase();
-            cards.forEach((card) => {
-                const streams = (card.dataset.streams || '').toLowerCase();
-                const matches = normalized === 'all' || streams.includes(normalized);
-                card.style.display = matches ? '' : 'none';
-            });
-        };
-
-        chips.forEach((chip) => {
-            chip.addEventListener('click', () => applyFilter(chip));
         });
     };
 

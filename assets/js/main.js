@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawerToggle = document.querySelector('.nav-toggle');
     const drawerClose = document.querySelector('.nav-drawer__close');
     const searchInput = document.getElementById('searchInput');
-    const filterChips = Array.from(document.querySelectorAll('.filter-chip'));
     const universityCards = Array.from(document.querySelectorAll('.university-card'));
     const streamTiles = Array.from(document.querySelectorAll('.stream-tile'));
     const streamInput = document.getElementById('streamInput');
@@ -125,26 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const applyFilters = () => {
         const query = searchInput?.value?.trim().toLowerCase() || '';
-        const activeFilters = filterChips
-            .filter((chip) => chip.classList.contains('active'))
-            .map((chip) => chip.dataset.filter?.toLowerCase());
 
         universityCards.forEach((card) => {
             const searchable = card.dataset.search?.toLowerCase() || '';
-            const streams = card.dataset.streams?.toLowerCase() || '';
             const matchesQuery = query === '' || searchable.includes(query);
-            const matchesFilters = activeFilters.length === 0 || activeFilters.every((filter) => streams.includes(filter));
-            card.style.display = matchesQuery && matchesFilters ? '' : 'none';
+            card.style.display = matchesQuery ? '' : 'none';
         });
     };
 
     searchInput?.addEventListener('input', applyFilters);
-
-    filterChips.forEach((chip) => {
-        chip.addEventListener('click', () => {
-            chip.classList.toggle('active');
-            applyFilters();
-        });
 
     streamTiles.forEach((tile) => {
         tile.addEventListener('click', () => {
