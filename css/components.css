@@ -1,22 +1,22 @@
 /* Component styles (nav, buttons, chips, cards, badges) */
 .floating-navbar {
     position: fixed;
-    top: var(--space-4);
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(1050px, calc(100% - var(--space-6)));
-    background: rgba(8, 12, 20, 0.7);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-full);
-    padding: 14px 28px;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: rgba(8, 12, 20, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0;
+    padding: 12px clamp(14px, 3vw, 36px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-4);
     z-index: 1000;
-    box-shadow: var(--shadow-dark-sm);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
     animation: slideInNav 400ms var(--ease-default) 200ms both;
     margin: 0;
 }
@@ -33,6 +33,13 @@
     font-size: var(--text-lg);
     color: white;
     justify-self: start;
+}
+
+.floating-navbar__brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
 }
 
 nav {
@@ -69,7 +76,7 @@ nav {
 }
 
 .nav-link.is-active {
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     color: var(--accent-300);
 }
 
@@ -130,6 +137,25 @@ nav {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+}
+
+.nav-drawer__actions {
+    display: none;
+    margin-top: 1rem;
+}
+
+.nav-drawer__action-btn {
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.nav-drawer__action-btn + .nav-drawer__action-btn {
+    margin-top: 0.5rem;
+}
+
+.nav-drawer__theme-toggle-item {
+    margin-top: 1rem;
 }
 
 .drawer-link {
@@ -704,9 +730,7 @@ nav {
 
 @media (max-width: var(--bp-md)) {
     .floating-navbar {
-        width: calc(100% - var(--space-4));
-        border-radius: var(--radius-lg);
-        padding: 10px 16px;
+        padding: 10px 14px;
     }
 
     .nav-links {

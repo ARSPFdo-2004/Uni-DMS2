@@ -113,7 +113,8 @@ const App = (() => {
             if (!start) start = timestamp;
             const progress = Math.min((timestamp - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
-            el.textContent = `${Math.floor(eased * target)}${suffix}`;
+            const current = Math.min(target, Math.ceil(eased * target));
+            el.textContent = `${current}${suffix}`;
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             } else {

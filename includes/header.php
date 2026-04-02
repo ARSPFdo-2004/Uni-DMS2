@@ -36,7 +36,7 @@ $currentScript = basename($_SERVER['PHP_SELF']);
 <div class="site-shell">
     <header class="floating-navbar">
         <div class="floating-navbar__brand">
-            <a href="index.php" style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+            <a class="floating-navbar__brand-link" href="index.php">
                 <span class="floating-navbar__brand-mark" aria-hidden="true"></span>
                 <span>Uni-DMS</span>
             </a>
@@ -72,11 +72,11 @@ $currentScript = basename($_SERVER['PHP_SELF']);
                         <a class="drawer-link" href="<?php echo $file; ?>"><?php echo $label; ?></a>
                     </li>
                 <?php endforeach; ?>
-                <li class="drawer-mobile-only" style="display: none; margin-top: 1rem;">
-                    <a class="btn btn-secondary" style="width: 100%; display: block; text-align: center; margin-bottom: 0.5rem;" href="login.php">Sign In</a>
-                    <a class="btn btn-primary" style="width: 100%; display: block; text-align: center;" href="finder.php">Find My Degree</a>
+                <li class="drawer-mobile-only nav-drawer__actions">
+                    <a class="btn btn-secondary nav-drawer__action-btn" href="login.php">Sign In</a>
+                    <a class="btn btn-primary nav-drawer__action-btn" href="finder.php">Find My Degree</a>
                 </li>
-                <li style="margin-top: 1rem;">
+                <li class="nav-drawer__theme-toggle-item">
                     <button id="theme-toggle" class="btn-theme" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
                 </li>
             </ul>

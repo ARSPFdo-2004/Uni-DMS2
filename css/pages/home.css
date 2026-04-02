@@ -1,20 +1,65 @@
 /* Home page hero, stats, and bento grid */
 .home-hero {
-    align-items: flex-end;
-    padding-top: calc(120px + var(--space-6));
+    align-items: center;
+    padding: clamp(96px, 9vw, 120px) var(--page-padding);
     min-height: 700px;
+    position: relative;
+    isolation: isolate;
+}
+
+.home-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('../../images/Graduation_hats.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .home-hero .hero-content {
-    max-width: 720px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    max-width: none;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    column-gap: clamp(24px, 5vw, 72px);
+    row-gap: var(--space-4);
+    align-items: center;
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.home-hero .hero-content h1,
+.home-hero .hero-content .page-hero-meta,
+.home-hero .hero-content .hero-cta-group {
+    grid-column: 1;
+}
+
+.home-hero h1 {
+    text-align: left;
+    margin-top: var(--space-3);
+}
+
+.hero-title-line {
+    display: block;
+    white-space: nowrap;
 }
 
 .hero-highlight {
     color: var(--accent-400);
     display: block;
+}
+
+@media (max-width: var(--bp-sm)) {
+    .hero-title-line {
+        white-space: normal;
+    }
 }
 
 .hero-stats-row {
@@ -25,6 +70,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 1;
 }
 
 .hero-orb {
@@ -54,6 +100,7 @@
     background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
     background-size: 32px 32px;
     opacity: 0.3;
+    z-index: 1;
 }
 
 .hero-line {
@@ -63,17 +110,37 @@
     width: 100%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--accent-500), transparent);
+    z-index: 1;
 }
 
 .hero-stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-4);
-    margin-top: var(--space-4);
+    margin-top: 0;
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+}
+
+.hero-stats-grid .stat-card:nth-child(3) {
+    grid-column: 1 / -1;
 }
 
 .hero-stats-grid .stat-card {
     background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: var(--bp-md)) {
+    .home-hero .hero-content {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-stats-grid {
+        grid-column: 1;
+        grid-row: auto;
+        margin-top: var(--space-4);
+    }
 }
 
 .bento-section {
@@ -84,6 +151,153 @@
 .bento-section-header {
     text-align: center;
     margin-bottom: var(--space-12);
+}
+
+.hero-flow-slider {
+    position: relative;
+    min-height: 320px;
+    max-width: 540px;
+    margin: 0 auto;
+    isolation: isolate;
+}
+
+.flow-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: clamp(20px, 3vw, 34px);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background:
+        linear-gradient(140deg, rgba(99, 102, 241, 0.16) 0%, rgba(15, 23, 42, 0.35) 38%, rgba(8, 12, 20, 0.5) 100%),
+        rgba(10, 14, 26, 0.5);
+    backdrop-filter: blur(22px) saturate(165%);
+    -webkit-backdrop-filter: blur(22px) saturate(165%);
+    box-shadow: 0 22px 46px rgba(5, 8, 18, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    transform: translateX(8%);
+    animation: flowCardCycle 12s ease-in-out infinite;
+    overflow: hidden;
+    isolation: isolate;
+    z-index: 1;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.flow-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('../../images/Pattern.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.02;
+    mix-blend-mode: soft-light;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.flow-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.03) 35%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.flow-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.flow-card h3 {
+    margin: 0;
+}
+
+.flow-card p {
+    max-width: 62ch;
+    color: var(--text-on-dark-secondary);
+}
+
+.flow-card h3 {
+    color: var(--text-on-dark-primary);
+}
+
+.flow-card .btn {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.flow-card .btn-secondary {
+    border-color: rgba(255, 255, 255, 0.35);
+    color: var(--text-on-dark-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.flow-card .btn-secondary:hover,
+.flow-card .btn-secondary:focus-visible {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+.flow-card.is-browse {
+    animation-delay: 0s;
+}
+
+.flow-card.is-gallery {
+    animation-delay: 4s;
+}
+
+.flow-card.is-finder {
+    animation-delay: 8s;
+}
+
+@keyframes flowCardCycle {
+    0% {
+        opacity: 0;
+        transform: translateX(8%);
+        visibility: hidden;
+        pointer-events: none;
+    }
+    8% {
+        opacity: 1;
+        transform: translateX(0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+    28% {
+        opacity: 1;
+        transform: translateX(0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+    36% {
+        opacity: 0;
+        transform: translateX(-8%);
+        visibility: hidden;
+        pointer-events: none;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-8%);
+        visibility: hidden;
+        pointer-events: none;
+    }
+}
+
+@media (max-width: var(--bp-sm)) {
+    .hero-flow-slider {
+        min-height: 360px;
+    }
 }
 
 .bento-grid {

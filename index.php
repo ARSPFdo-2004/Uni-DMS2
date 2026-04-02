@@ -10,49 +10,20 @@ include 'includes/header.php';
     </div>
     <div class="hero-line" aria-hidden="true"></div>
     <div class="container hero-content">
-        <span class="hero-pill">
-            <span class="hero-pill-dot" aria-hidden="true"></span>
-            Guided by research, inspired by tradition
-        </span>
         <h1>
-            Discover the Degree<br>
-            <span class="hero-highlight">Built for Your Z-Score.</span>
+            <span class="hero-title-line">Discover the Degree</span>
+            <span class="hero-highlight hero-title-line">Built for Your Z-Score</span>
         </h1>
         <p class="page-hero-meta">
             300+ programs across 25+ Sri Lankan universities — matched instantly to your ambitions and A/L results.
         </p>
-        <div class="hero-cta-group">
-            <a class="btn btn-primary" href="finder.php" id="findDegreeBtn" style="border: 3px solid red; z-index:9999; pointer-events:auto; position:relative !important;">Find My Degree</a>
-            <a class="btn btn-ghost" href="universities.php" id="browseUnisBtn" style="border: 3px solid blue; z-index:9999; pointer-events:auto; position:relative !important;">Browse Universities</a>
-        </div>
-        <script>
-        // Debug: Force pointer events and alert on click
-        document.addEventListener('DOMContentLoaded', function() {
-            var findBtn = document.getElementById('findDegreeBtn');
-            var browseBtn = document.getElementById('browseUnisBtn');
-            if (findBtn) {
-                findBtn.addEventListener('click', function(e) {
-                    alert('FIND DEGREE BUTTON CLICKED');
-                    e.preventDefault();
-                    window.location.href = 'finder.php';
-                });
-            }
-            if (browseBtn) {
-                browseBtn.addEventListener('click', function(e) {
-                    alert('BROWSE UNIVERSITIES BUTTON CLICKED');
-                    e.preventDefault();
-                    window.location.href = 'universities.php';
-                });
-            }
-        });
-        </script>
         <div class="hero-stats-grid">
             <article class="stat-card">
-                <div class="stat-count" data-target-number="25" data-suffix="+">0</div>
+                <div class="stat-count" data-target-number="17" data-suffix="+">0</div>
                 <p class="stat-label">Universities</p>
             </article>
             <article class="stat-card">
-                <div class="stat-count" data-target-number="300" data-suffix="+">0</div>
+                <div class="stat-count" data-target-number="150" data-suffix="+">0</div>
                 <p class="stat-label">Degree programs</p>
             </article>
             <article class="stat-card">
@@ -66,105 +37,24 @@ include 'includes/header.php';
 <section class="section-shell bento-section" aria-label="Bento grid">
     <div class="container">
         <div class="bento-section-header">
-            <p class="eyebrow">Everything you need</p>
             <h2>Your complete guide to university life in Sri Lanka</h2>
-            <p class="section-subtitle">Asymmetric rhythm, premium polish — move through curated stories and z-score clarity without friction.</p>
+            <p class="section-subtitle">A polished, modern experience. Browse curated university paths and get instant Z-score clarity, completely hassle free.</p>
         </div>
-        <div class="bento-grid" id="bentoGrid">
-            <article class="bento-card bento-large reveal-on-scroll">
-                <div class="large-morph" aria-hidden="true"></div>
-                <p class="eyebrow">Universities</p>
+        <div class="hero-flow-slider" aria-label="Highlights slider">
+            <article class="flow-card is-browse" aria-label="Browse Universities card">
                 <h3>Browse Universities</h3>
                 <p>Navigate tiered campuses, heritage rituals, and future-ready programs with guided stories.</p>
-                <div class="card-links">
-                    <a class="btn btn-secondary" href="universities.php">Explore →</a>
-                </div>
+                <a class="btn btn-primary" href="universities.php">View Universities</a>
             </article>
-            <article class="bento-card bento-medium bento-card--accent reveal-on-scroll">
-                <p class="eyebrow">Z-Score Finder</p>
-                <h3>Find your fit fast</h3>
-                <p>Set your score, pick a stream, and we yield curated programs instantly.</p>
-                <div class="card-links">
-                    <a class="btn btn-primary" href="finder.php">Launch Finder</a>
-                </div>
+            <article class="flow-card is-gallery" aria-label="View Gallery card">
+                <h3>View Gallery</h3>
+                <p>Explore campus stories through labs, green spaces, and student life moments.</p>
+                <a class="btn btn-primary" href="gallery.php">Open Gallery</a>
             </article>
-            <article class="bento-card bento-medium bento-card--dark reveal-on-scroll">
-                <p class="eyebrow">Gallery</p>
-                <h3>Campus stories</h3>
-                <div class="mini-gallery">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <p>Light-filled labs, serene lawns, and guided rituals captured in motion.</p>
-                <div class="card-links">
-                    <a class="btn btn-secondary" href="gallery.php">View gallery</a>
-                </div>
-            </article>
-            <article class="bento-card bento-half reveal-on-scroll">
-                <p class="eyebrow">How it works</p>
-                <h3>Minimal steps, calm clarity</h3>
-                <ul class="kpi-row">
-                    <li class="kpi">
-                        <strong>01</strong>
-                        <p>We listen to your story</p>
-                    </li>
-                    <li class="kpi">
-                        <strong>02</strong>
-                        <p>Pair streams + rituals</p>
-                    </li>
-                    <li class="kpi">
-                        <strong>03</strong>
-                        <p>Launch with confidence</p>
-                    </li>
-                </ul>
-                <div class="card-links" style="margin-top: 1.5rem;">
-                    <a class="btn btn-secondary" href="about.php">Our approach →</a>
-                </div>
-            </article>
-            <article class="bento-card bento-half bento-card--stats reveal-on-scroll">
-                <p class="eyebrow">Sri Lanka stats</p>
-                <h3>Local data, global craft</h3>
-                <div class="kpi-row">
-                    <div class="kpi">
-                        <strong class="accent">92%</strong>
-                        <p>of students feel guided</p>
-                    </div>
-                    <div class="kpi">
-                        <strong class="accent">48</strong>
-                        <p>exclusive workshops</p>
-                    </div>
-                </div>
-                <div class="card-links" style="margin-top: 1.5rem; position: relative; z-index: 2;">
-                    <a class="btn btn-secondary" href="universities.php">See all universities →</a>
-                </div>
-                <div class="map-decor" aria-hidden="true"></div>
-            </article>
-        </div>
-    </div>
-</section>
-<section class="section-shell" aria-label="Feature highlights">
-    <div class="container">
-        <h2>Where guidance meets craftsmanship</h2>
-        <div class="feature-grid">
-            <article class="feature-card reveal-on-scroll">
-                <div class="feature-icon" aria-hidden="true"><i class="fa-solid fa-waveform-path"></i></div>
-                <h3>Guided narratives</h3>
-                <p>Every story, ritual, and campus detail is narrated with precision so you feel confident from the first scroll.</p>
-                <div style="margin-top: 1rem;"><a class="btn btn-ghost" href="about.php">Read our story →</a></div>
-            </article>
-            <article class="feature-card reveal-on-scroll">
-                <div class="feature-icon" aria-hidden="true"><i class="fa-solid fa-atom"></i></div>
-                <h3>Z-score resonance</h3>
-                <p>Dedicated algorithms pair your score with culture-first outcomes — no guesswork, just calm certainty.</p>
-                <div style="margin-top: 1rem;"><a class="btn btn-ghost" href="finder.php">Try finder →</a></div>
-            </article>
-            <article class="feature-card reveal-on-scroll">
-                <div class="feature-icon" aria-hidden="true"><i class="fa-solid fa-globe"></i></div>
-                <h3>Future-ready fits</h3>
-                <p>We showcase Sri Lanka’s brightest programs with stories of labs, studios, and traditions shaping tomorrow.</p>
-                <div style="margin-top: 1rem;"><a class="btn btn-ghost" href="universities.php">View universities →</a></div>
+            <article class="flow-card is-finder" aria-label="Z-Score Finder card">
+                <h3>Z-Score Finder</h3>
+                <p>Enter your stream and score to instantly discover degrees matched to your results.</p>
+                <a class="btn btn-primary" href="finder.php">Launch Finder</a>
             </article>
         </div>
     </div>
