@@ -352,7 +352,122 @@ nav {
 }
 
 .about-intro-section {
-    padding-top: clamp(150px, 20vw, 230px);
+    padding-top: var(--space-10);
+}
+
+.mission-vision-section {
+    padding-top: clamp(180px, 24vw, 270px);
+}
+
+.mission-vision-stack {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.glass-story-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-5);
+    padding: clamp(22px, 3.2vw, 34px);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    background: rgba(248, 249, 252, 0.58);
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    overflow: hidden;
+}
+
+.glass-story-card.no-leading-icon {
+    grid-template-columns: 1fr auto;
+}
+
+.glass-story-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.glass-story-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background-image:
+        radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.16) 0 2px, transparent 2px),
+        radial-gradient(circle at 78% 72%, rgba(99, 102, 241, 0.1) 0 2px, transparent 2px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 42%);
+    background-size: 22px 22px, 26px 26px, 100% 100%;
+    mix-blend-mode: soft-light;
+    opacity: 0.35;
+}
+
+.mission-card::before {
+    background: linear-gradient(110deg, rgba(165, 180, 252, 0.22), rgba(129, 140, 248, 0.08) 42%, rgba(248, 249, 252, 0.25));
+}
+
+.vision-card::before {
+    background: linear-gradient(110deg, rgba(129, 140, 248, 0.2), rgba(99, 102, 241, 0.1) 46%, rgba(248, 249, 252, 0.24));
+}
+
+.story-icon-badge,
+.story-copy,
+.story-accent {
+    position: relative;
+    z-index: 1;
+}
+
+.story-icon-badge {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    font-size: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--accent-600);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.25));
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.14);
+}
+
+.vision-card .story-icon-badge {
+    color: var(--accent-500);
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.16);
+}
+
+.story-copy h2 {
+    font-size: clamp(1.35rem, 2.5vw, 2.15rem);
+    margin-bottom: var(--space-2);
+}
+
+.glass-story-card .story-copy .eyebrow {
+    font-size: var(--text-sm);
+    color: var(--accent-600);
+}
+
+.story-copy p:last-child {
+    margin: 0;
+    max-width: 74ch;
+}
+
+.story-accent {
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    color: rgba(79, 70, 229, 0.65);
+}
+
+.vision-card .story-accent {
+    color: rgba(99, 102, 241, 0.72);
+}
+
+.vision-card .story-copy p:last-child {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .filter-chip {
@@ -441,7 +556,27 @@ nav {
     }
 
     .about-intro-section {
-        padding-top: clamp(110px, 28vw, 160px);
+        padding-top: var(--space-8);
+    }
+
+    .mission-vision-section {
+        padding-top: clamp(132px, 32vw, 190px);
+    }
+
+    .glass-story-card {
+        grid-template-columns: auto 1fr;
+        gap: var(--space-4);
+    }
+
+    .story-accent {
+        display: none;
+    }
+
+    .story-icon-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        font-size: 1.45rem;
     }
 }
 
