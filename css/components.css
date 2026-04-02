@@ -309,6 +309,52 @@ nav {
     font-size: 1.25rem;
 }
 
+.about-hero {
+    overflow: visible;
+    padding-bottom: clamp(150px, 20vw, 230px);
+}
+
+.about-hero .hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.about-hero-image-wrap {
+    position: absolute;
+    left: 50%;
+    right: auto;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    width: min(680px, calc(100% - 2 * var(--page-padding)));
+    aspect-ratio: 16 / 10;
+    border-radius: clamp(14px, 2vw, 24px);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08));
+    box-shadow: 0 28px 60px rgba(5, 8, 20, 0.34), 0 8px 20px rgba(5, 8, 20, 0.22);
+    z-index: 3;
+}
+
+.about-hero-image-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--accent-300);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.about-hero-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.about-intro-section {
+    padding-top: clamp(150px, 20vw, 230px);
+}
+
 .filter-chip {
     border-radius: var(--radius-full);
     padding: 6px 14px;
@@ -388,6 +434,14 @@ nav {
 
     .nav-toggle {
         display: flex;
+    }
+
+    .about-hero {
+        padding-bottom: clamp(110px, 28vw, 160px);
+    }
+
+    .about-intro-section {
+        padding-top: clamp(110px, 28vw, 160px);
     }
 }
 

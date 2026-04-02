@@ -2,14 +2,17 @@
 $pageTitle = 'About';
 include 'includes/header.php';
 ?>
-<section class="page-hero reveal-on-scroll" aria-label="About hero">
+<section class="page-hero reveal-on-scroll about-hero" aria-label="About hero">
     <div class="container hero-content">
         <p class="eyebrow">About Uni-DMS</p>
         <h1>Empowering Your Journey to Higher Education in Sri Lanka.</h1>
         <p class="page-hero-meta">We simplify the path from A/L results to your dream career. Discover universities, find your degree, and unlock your future—all in one place.</p>
     </div>
+    <div class="about-hero-image-wrap">
+        <img src="images/Graduation.jpg" alt="Students celebrating graduation" loading="lazy">
+    </div>
 </section>
-<section class="section-shell">
+<section class="section-shell about-intro-section">
     <div class="container">
         <div class="feature-grid">
             <article class="feature-card reveal-on-scroll">
