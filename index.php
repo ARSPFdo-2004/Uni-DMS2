@@ -61,10 +61,6 @@ include 'includes/header.php';
             </article>
         </div>
     </div>
-    <button class="hero-scroll" data-scroll-target="#bentoGrid" aria-label="Scroll to bento grid">
-        <span aria-hidden="true">⌄</span>
-        <small>Scroll</small>
-    </button>
 </section>
 <div class="page-transition" aria-hidden="true"></div>
 <section class="section-shell bento-section" aria-label="Bento grid">
