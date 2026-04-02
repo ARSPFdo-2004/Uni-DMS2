@@ -8,8 +8,24 @@ $degrees = [];
 $error = "";
 $searchMode = ""; // "zscore" or "name"
 
-$subjects = ["Combined Mathematics", "Physics", "Chemistry", "ICT", "Biology"];
-$districts = ["Colombo", "Gampaha", "Galle", "All"];
+$subjects = ["Combined Mathematics", "Physics", "Chemistry", "ICT", "Biology", "Accounting", "Business Statistics", "Economics", "Any"];
+$districts = ["COLOMBO", "GAMPAHA", "KALUTARA", "MATALE", "KANDY", "NUWARA ELIYA", "GALLE", "MATARA", "HAMBANTOTA", "JAFFNA", "KILINOCHCHI", "MANNAR", "MULLAITIVU", "VAVUNIYA", "TRINCOMALEE", "BATTICALOA", "AMPARA", "PUTTALAM", "KURUNEGALA", "ANURADHAPURA", "POLONNARUWA", "BADULLA", "MONARAGALA", "All Island Ranges"];
+
+// Fetch distinct universities and degree names from flat_zscores
+$uniList = [];
+$degreeNamesList = [];
+$res = $conn->query("SELECT DISTINCT university_name FROM flat_zscores ORDER BY university_name ASC");
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $uniList[] = $row['university_name'];
+    }
+}
+$resDeg = $conn->query("SELECT DISTINCT degree_name FROM flat_zscores ORDER BY degree_name ASC");
+if ($resDeg) {
+    while ($row = $resDeg->fetch_assoc()) {
+        $degreeNamesList[] = $row['degree_name'];
+    }
+}
 
 $sub1 = $_POST["subject1"] ?? "";
 $sub2 = $_POST["subject2"] ?? "";
@@ -17,6 +33,7 @@ $sub3 = $_POST["subject3"] ?? "";
 $district = $_POST["district"] ?? "";
 
 $degreeSearchName = $_POST["search_degree_name"] ?? "";
+$searchUniversity = $_POST["search_university"] ?? "";
 
 $submittedZscore = $_POST["zscore"] ?? "";
 $zscore = is_numeric($submittedZscore) ? floatval($submittedZscore) : 0;
@@ -27,29 +44,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($_POST["zscore_search"])) {
         $searchMode = "zscore";
         if ($zscore > 0 && $sub1 && $sub2 && $sub3 && $district) {
+            $dCol = strtolower(str_replace(' ', '_', $district));
             $stmt = $conn->prepare("
-                SELECT d.name AS degree_name, u.name AS university_name, u.id AS university_id, 
-                       z.cutoff, d.duration, d.medium, d.description 
-                FROM degrees d 
-                JOIN departments dep ON d.department_id = dep.id 
-                JOIN faculties f ON dep.faculty_id = f.id 
-                JOIN universities u ON f.university_id = u.id 
-                JOIN zscore_cutoffs z ON d.id = z.degree_id 
+                SELECT f.degree_name, f.university_name, 
+                       f.`$dCol` as cutoff,
+                       0 AS university_id, '' AS duration, '' AS medium, '' AS description
+                FROM flat_zscores f 
                 WHERE 
                 (
-                    ? IN (z.subject1, z.subject2, z.subject3) AND
-                    ? IN (z.subject1, z.subject2, z.subject3) AND
-                    ? IN (z.subject1, z.subject2, z.subject3)
+                    (? IN (f.subject1, f.subject2, f.subject3) OR f.subject1 = 'Any') AND
+                    (? IN (f.subject1, f.subject2, f.subject3) OR f.subject1 = 'Any') AND
+                    (? IN (f.subject1, f.subject2, f.subject3) OR f.subject1 = 'Any')
                 )
-                AND (z.district = 'All' OR z.district = ?) 
-                AND z.cutoff <= ? 
-                ORDER BY z.cutoff DESC
+                AND f.`$dCol` <= ? AND f.`$dCol` IS NOT NULL
+                ORDER BY f.`$dCol` DESC
             ");
             
             $stmt->bind_param(
-                "ssssd", 
+                "sssd", 
                 $sub1, $sub2, $sub3, 
-                $district, 
                 $zscore
             );
             
@@ -61,22 +74,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     } elseif (isset($_POST["name_search"])) {
         $searchMode = "name";
+        // To use dropdowns for both degree name and university, we check if they are provided
         if (!empty(trim($degreeSearchName))) {
             $likeDegree = "%" . $degreeSearchName . "%";
-            $stmt = $conn->prepare("
-                SELECT d.name AS degree_name, u.name AS university_name, u.id AS university_id, 
-                       MIN(z.cutoff) as cutoff, d.duration, d.medium, d.description 
-                FROM degrees d 
-                JOIN departments dep ON d.department_id = dep.id 
-                JOIN faculties f ON dep.faculty_id = f.id 
-                JOIN universities u ON f.university_id = u.id 
-                LEFT JOIN zscore_cutoffs z ON d.id = z.degree_id 
-                WHERE d.name LIKE ?
-                GROUP BY d.id
-                ORDER BY d.name ASC
-            ");
+            $query = "
+                SELECT f.*, 
+                       MAX(d.duration) as duration, 
+                       MAX(d.medium) as medium, 
+                       MAX(d.description) as description,
+                       MAX(d.department_id) as dept_id
+                FROM flat_zscores f 
+                LEFT JOIN degrees d ON f.degree_name = d.name
+                WHERE f.degree_name LIKE ?";
             
-            $stmt->bind_param("s", $likeDegree);
+            $types = "s";
+            $params = [$likeDegree];
+            
+            if (!empty($searchUniversity)) {
+                $query .= " AND f.university_name = ?";
+                $types .= "s";
+                $params[] = $searchUniversity;
+            }
+            $query .= " GROUP BY f.id ORDER BY f.degree_name ASC";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param($types, ...$params);
             $stmt->execute();
             $degrees = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
@@ -153,13 +175,26 @@ include "includes/header.php";
 
                 <div class="slider-wrapper">
                     <label for="zscoreRange">Your Z-Score</label>
-                    <input type="range" class="range-slider" id="zscoreRange" min="0" max="4" step="0.001" value="<?php echo htmlspecialchars($sliderValueFormatted); ?>">
-                    <div class="range-value">
-                        <span>Your Z-Score:</span>
-                        <strong id="zscoreValue"><?php echo htmlspecialchars($sliderValueFormatted); ?></strong>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <input type="range" class="range-slider" id="zscoreRange" min="0" max="4" step="0.001" value="<?php echo htmlspecialchars($sliderValueFormatted); ?>" style="flex:1;">
+                        <input type="number" id="zscoreInput" name="zscore" min="0" max="4" step="0.001" value="<?php echo htmlspecialchars($sliderValueFormatted); ?>" style="width:100px; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" required>
                     </div>
-                    <input type="hidden" id="zscoreInput" name="zscore" value="<?php echo htmlspecialchars($sliderValueFormatted); ?>">
                 </div>
+                <!-- Remove the old hidden input and strong text logic, simply adding event listeners to sync them -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const slider = document.getElementById('zscoreRange');
+                        const input = document.getElementById('zscoreInput');
+                        if(slider && input) {
+                            slider.addEventListener('input', function() {
+                                input.value = slider.value;
+                            });
+                            input.addEventListener('input', function() {
+                                slider.value = input.value;
+                            });
+                        }
+                    });
+                </script>
                 
                 <div class="finder-actions">
                     <button type="submit" class="btn btn-primary">Find Degrees</button>
@@ -170,11 +205,26 @@ include "includes/header.php";
             <!-- Degree Name Search Form -->
             <form class="finder-stage reveal-on-scroll" method="POST" action="finder.php#results" style="flex:1; min-width: 300px; height: fit-content;">
                 <input type="hidden" name="name_search" value="1">
-                <h3 style="margin-bottom: 16px;">Search by Degree Name</h3>
+                <h3 style="margin-bottom: 16px;">Search by Degree Name & University</h3>
                 
                 <div class="form-field" style="margin-bottom: 16px;">
                     <label>Degree Name</label>
-                    <input type="text" id="searchInput" name="search_degree_name" placeholder="e.g. Artificial Intelligence" value="<?php echo htmlspecialchars($degreeSearchName); ?>" required style="width:100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <input type="text" id="searchInput" name="search_degree_name" list="degreeNameOptions" placeholder="" value="<?php echo htmlspecialchars($degreeSearchName); ?>" required style="width:100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <datalist id="degreeNameOptions">
+                        <?php foreach($degreeNamesList as $dn): ?>
+                            <option value="<?php echo htmlspecialchars($dn); ?>"></option>
+                        <?php endforeach; ?>
+                    </datalist>
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 16px;">
+                    <label>University (Optional)</label>
+                    <select name="search_university" style="width:100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">All Universities</option>
+                        <?php foreach($uniList as $uni): ?>
+                            <option value="<?php echo htmlspecialchars($uni); ?>" <?php echo $searchUniversity === $uni ? "selected" : ""; ?>><?php echo htmlspecialchars($uni); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 
                 <div class="finder-actions">
@@ -192,29 +242,126 @@ include "includes/header.php";
         <?php if ($_SERVER["REQUEST_METHOD"] === "POST"): ?>
             <div class="finder-results">
                 <?php if ($degrees): ?>
-                    <?php foreach ($degrees as $deg): ?>
-                        <article class="finder-card reveal-on-scroll">
-                            <div class="finder-card-head">
-                                <h3><?php echo htmlspecialchars($deg["degree_name"]); ?></h3>
-                                <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
-                                    <span class="zscore-badge">Z-Score cutoff (~): <?php echo htmlspecialchars($deg["cutoff"]); ?></span>
-                                <?php endif; ?>
-                            </div>
-                            <div class="finder-card-meta">
-                                <span><strong>University:</strong> <?php echo htmlspecialchars($deg["university_name"]); ?></span>
-                            </div>
-                            <?php if(!empty($deg["duration"])): ?>
-                            <p><strong>Duration:</strong> <?php echo htmlspecialchars($deg["duration"]); ?></p>
-                            <?php endif; ?>
-                            <?php if(!empty($deg["medium"])): ?>
-                            <p><strong>Medium:</strong> <?php echo htmlspecialchars($deg["medium"]); ?></p>
-                            <?php endif; ?>
-                            <p><?php echo htmlspecialchars($deg["description"]); ?></p>
-                            <?php if (!empty($deg["university_id"])): ?>
-                                <a class="btn btn-ghost" href="university.php?id=<?php echo $deg["university_id"]; ?>">View Details &rarr;</a>
-                            <?php endif; ?>
-                        </article>
-                    <?php endforeach; ?>
+                    <div style="overflow-x:auto;">
+                        <?php if ($searchMode === 'name'): ?>
+                            <?php foreach ($degrees as $index => $deg): ?>
+                                <div style="margin-bottom: 48px; background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-wrap: wrap;">
+                                    
+                                    <!-- Degree Details (Left side) -->
+                                    <div style="flex: 1; padding: 24px; min-width: 300px; border-right: 1px solid #eaeaea;">
+                                        <h3 style="margin-bottom: 16px; font-size: 1.5rem; color: #0056b3;"><?php echo htmlspecialchars($deg["degree_name"]); ?></h3>
+                                        <p style="font-size: 1.1rem; color: #555; margin-bottom: 24px;"><strong>University:</strong> <?php echo htmlspecialchars($deg["university_name"]); ?></p>
+                                        
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                                            <div><strong style="color: #666;">Duration:</strong> <br><?php echo !empty($deg["duration"]) ? htmlspecialchars($deg["duration"]) : "Not Specified"; ?></div>
+                                            <div><strong style="color: #666;">Medium:</strong> <br><?php echo !empty($deg["medium"]) ? htmlspecialchars($deg["medium"]) : "Not Specified"; ?></div>
+                                            <div><strong style="color: #666;">Subject Req 1:</strong> <br><?php echo !empty($deg["subject1"]) ? htmlspecialchars($deg["subject1"]) : "-"; ?></div>
+                                            <div><strong style="color: #666;">Subject Req 2/3:</strong> <br><?php echo (!empty($deg["subject2"]) ? htmlspecialchars($deg["subject2"]) : "-") . " / " . (!empty($deg["subject3"]) ? htmlspecialchars($deg["subject3"]) : "-"); ?></div>
+                                        </div>
+                                        
+                                        <?php if(!empty($deg["description"])): ?>
+                                            <div style="background: #f8f9fa; padding: 16px; border-radius: 6px;">
+                                                <strong style="color: #666;">Description:</strong>
+                                                <p style="margin-top: 8px; color: #444; font-size: 0.95rem; line-height: 1.5;"><?php echo htmlspecialchars($deg["description"]); ?></p>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Cutoffs Table (Right side vertical) -->
+                                    <div style="flex: 1; min-width: 300px; max-height: 480px; overflow-y: auto;">
+                                        <table style="width:100%; border-collapse: collapse; text-align: left;">
+                                            <thead style="background: #f8f9fa; position: sticky; top: 0; z-index: 10;">
+                                                <tr style="border-bottom: 2px solid #eaeaea;">
+                                                    <th style="padding: 16px;">District</th>
+                                                    <th style="padding: 16px;">Z-Score Cutoff</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php 
+                                                $districtCols = [
+                                                    'colombo','gampaha','kalutara','matale','kandy','nuwara_eliya','galle','matara','hambantota','jaffna','kilinochchi','mannar','mullaitivu','vavuniya','trincomalee','batticaloa','ampara','puttalam','kurunegala','anuradhapura','polonnaruwa','badulla','monaragala','ratnapura','kegalle'
+                                                ];
+                                                foreach($districtCols as $dc): 
+                                                    $dName = ucwords(str_replace('_', ' ', $dc));
+                                                    $val = $deg[$dc] ?? null;
+                                                ?>
+                                                    <tr style="border-bottom: 1px solid #f1f1f1;">
+                                                        <td style="padding: 12px 16px; color: #333; font-weight: 500;"><?php echo htmlspecialchars($dName); ?></td>
+                                                        <td style="padding: 12px 16px;">
+                                                            <?php if($val !== null): ?>
+                                                                <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #0056b3;"><?php echo htmlspecialchars($val); ?></span>
+                                                            <?php else: ?>
+                                                                <span style="color: #aaa;">-</span>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <table style="width:100%; border-collapse: collapse; margin-bottom: 32px; text-align: left; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden;">
+                                <thead style="background: #f8f9fa;">
+                                    <tr style="border-bottom: 2px solid #eaeaea;">
+                                        <th style="padding: 16px;">Degree</th>
+                                        <th style="padding: 16px;">University</th>
+                                        <th style="padding: 16px;">Z-Score Cutoff</th>
+                                        <th style="padding: 16px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php foreach ($degrees as $index => $deg): ?>
+                                    <tr id="row-<?php echo $index; ?>" style="border-bottom: 1px solid #f1f1f1; transition: background 0.2s;">
+                                        <td style="padding: 16px; color: #333; font-weight: 500;"><?php echo htmlspecialchars($deg["degree_name"]); ?></td>
+                                        <td style="padding: 16px; color: #555;"><?php echo htmlspecialchars($deg["university_name"]); ?></td>
+                                        <td style="padding: 16px; color: #555;">
+                                            <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
+                                                <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-weight: bold;"><?php echo htmlspecialchars($deg["cutoff"]); ?></span>
+                                            <?php else: ?>
+                                                N/A
+                                            <?php endif; ?>
+                                        </td>
+                                        <td style="padding: 16px;">
+                                            <button type="button" class="btn btn-ghost" onclick="showDegreeDetails(<?php echo $index; ?>)" style="padding: 8px 16px; font-size: 0.9em;">View Details</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detail-row-<?php echo $index; ?>" style="display: none; background: #fafafa;">
+                                        <td colspan="4" style="padding: 16px;">
+                                            <fieldset style="border: 1px solid #ddd; padding: 24px; border-radius: 8px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                <legend style="padding: 0 12px; font-weight: bold; font-size: 1.1rem; color: #0056b3;">Degree Details</legend>
+                                                <h3 style="margin-bottom: 16px; font-size: 1.5rem; color: #333;"><?php echo htmlspecialchars($deg["degree_name"]); ?></h3>
+                                                
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                                                    <div><strong style="color: #666;">University:</strong> <br><?php echo htmlspecialchars($deg["university_name"]); ?></div>
+                                                    <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
+                                                        <div><strong style="color: #666;">Cutoff:</strong> <br><?php echo htmlspecialchars($deg["cutoff"]); ?></div>
+                                                    <?php endif; ?>
+                                                    <div><strong style="color: #666;">Duration:</strong> <br><?php echo !empty($deg["duration"]) ? htmlspecialchars($deg["duration"]) : "No details"; ?></div>
+                                                    <div><strong style="color: #666;">Medium:</strong> <br><?php echo !empty($deg["medium"]) ? htmlspecialchars($deg["medium"]) : "No details"; ?></div>
+                                                </div>
+                                                
+                                                <?php if(!empty($deg["description"])): ?>
+                                                    <div style="margin-bottom: 24px; background: #f8f9fa; padding: 16px; border-radius: 6px;">
+                                                        <strong style="color: #666;">Description:</strong>
+                                                        <p style="margin-top: 8px; color: #444;"><?php echo htmlspecialchars($deg["description"]); ?></p>
+                                                    </div>
+                                                <?php endif; ?>
+                                                
+                                                <div style="display: flex; gap: 16px; align-items: center; border-top: 1px solid #eaeaea; padding-top: 16px;">
+                                                    <?php if (!empty($deg["university_id"])): ?>
+                                                        <a class="btn btn-primary" href="university.php?id=<?php echo $deg["university_id"]; ?>">Go to University Page &rarr;</a>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </fieldset>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
                     <p class="section-subtitle">
                         <?php if($searchMode === "zscore"): ?>
@@ -230,6 +377,38 @@ include "includes/header.php";
 </section>
 
 <script>
+function showDegreeDetails(index) {
+    const detailRow = document.getElementById('detail-row-' + index);
+    const mainRow = document.getElementById('row-' + index);
+    
+    // If it's already shown, just hide it
+    if (detailRow && detailRow.style.display !== 'none') {
+        detailRow.style.display = 'none';
+        if (mainRow) mainRow.style.backgroundColor = 'transparent';
+        return;
+    }
+
+    // Hide all detail rows first
+    const allDetailRows = document.querySelectorAll('tr[id^="detail-row-"]');
+    allDetailRows.forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // Reset table row highlights
+    const allRows = document.querySelectorAll('tr[id^="row-"]');
+    allRows.forEach(el => {
+        el.style.backgroundColor = 'transparent';
+    });
+
+    // Show specific detail row and highlight main row
+    if (detailRow) {
+        detailRow.style.display = 'table-row';
+        if (mainRow) {
+            mainRow.style.backgroundColor = '#eef5ff'; // subtle highlight
+        }
+    }
+}
+
 function resetZscoreForm() {
     // Reset all select dropdowns strictly inside the zscore form
     const selects = document.querySelectorAll("input[name='zscore_search']").forEach(e => {
@@ -238,14 +417,12 @@ function resetZscoreForm() {
         formSelects.forEach(select => select.selectedIndex = 0);
     });
     
-    // Reset the slider and its displays to 0
+    // Reset the slider and text input to 0
     const slider = document.getElementById("zscoreRange");
-    const zValueDisplay = document.getElementById("zscoreValue");
     const zInput = document.getElementById("zscoreInput");
     
     if(slider) slider.value = "0";
-    if(zValueDisplay) zValueDisplay.textContent = "0.000";
-    if(zInput) zInput.value = "0.000";
+    if(zInput) zInput.value = "0";
 }
 
 function resetNameSearch() {

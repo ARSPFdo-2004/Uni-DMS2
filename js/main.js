@@ -184,28 +184,7 @@ const App = (() => {
     };
 
     const initSearchPlaceholder = () => {
-        const input = document.getElementById('searchInput');
-        if (!input) return;
-        const options = [
-            "Search 'Computer Science'...",
-            "Search 'Medicine'...",
-            "Search 'Engineering'...",
-            "Search 'Business'...",
-        ];
-        let index = 0;
-
-        const cycle = () => {
-            if (prefersReducedMotion) return;
-            input.classList.add('placeholder-fade');
-            setTimeout(() => {
-                index = (index + 1) % options.length;
-                input.placeholder = options[index];
-                input.classList.remove('placeholder-fade');
-            }, 220);
-        };
-
-        input.placeholder = options[index];
-        setInterval(cycle, 2500);
+        // Disabled automatic rotating placeholders
     };
 
     const initThemeToggle = () => {

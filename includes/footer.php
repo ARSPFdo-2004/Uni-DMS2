@@ -26,6 +26,6 @@ $footerNav = [
         </div>
     </footer>
 </div>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=<?php echo time(); ?>" defer></script>
 </body>
 </html>
