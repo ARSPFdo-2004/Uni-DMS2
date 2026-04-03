@@ -224,6 +224,18 @@
     margin-top: var(--space-6);
 }
 
+.results-summary {
+    margin-top: var(--space-4);
+    color: var(--text-on-light-secondary);
+    font-size: var(--text-sm);
+}
+
+.results-summary a {
+    color: var(--accent-500);
+    font-weight: 600;
+    margin-left: 0.25rem;
+}
+
 .pagination {
     display: flex;
     gap: 0.75rem;

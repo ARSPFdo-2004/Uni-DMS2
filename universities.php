@@ -7,10 +7,6 @@ $pageTitle = 'Universities';
 $pageStyles = ['css/pages/universities.css'];
 
 $searchTerm = trim($_GET['search'] ?? '');
-$perPage = 9;
-$page = max(1, (int) ($_GET['page'] ?? 1));
-$offset = ($page - 1) * $perPage;
-$totalRecords = 0;
 $universities = [];
 $whereClause = ' WHERE name IS NOT NULL AND TRIM(name) <> ?';
 $params = [];
@@ -26,27 +22,11 @@ if ($searchTerm !== '') {
     $paramTypes .= 'sss';
 }
 
-$countQuery = 'SELECT COUNT(*) AS total FROM universities' . $whereClause;
-$countStmt = $conn->prepare($countQuery);
-if ($countStmt && $params) {
-    $countStmt->bind_param($paramTypes, ...$params);
-}
-if ($countStmt) {
-    $countStmt->execute();
-    $countResult = $countStmt->get_result();
-    $totalRecords = (int) ($countResult->fetch_assoc()['total'] ?? 0);
-    $countStmt->close();
-}
-
-$query = 'SELECT * FROM universities' . $whereClause . ' ORDER BY name ASC LIMIT ?, ?';
+$query = 'SELECT * FROM universities' . $whereClause . ' ORDER BY id DESC';
 $stmt = $conn->prepare($query);
-$bindTypes = $paramTypes . 'ii';
 if ($stmt) {
     if ($params) {
-        $allParams = array_merge($params, [$offset, $perPage]);
-        $stmt->bind_param($bindTypes, ...$allParams);
-    } else {
-        $stmt->bind_param('ii', $offset, $perPage);
+        $stmt->bind_param($paramTypes, ...$params);
     }
     $stmt->execute();
     $universities = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -83,8 +63,6 @@ foreach ($universities as &$university) {
     $university['degree_count'] = $degreeCount;
 }
 unset($university);
-
-$totalPages = $perPage > 0 ? max(1, (int) ceil($totalRecords / $perPage)) : 1;
 $rankedIds = array_map(function ($item) {
     return $item['id'];
 }, array_slice($universities, 0, 2));
@@ -119,6 +97,12 @@ include 'includes/header.php';
                     value="<?php echo htmlspecialchars($searchTerm); ?>">
             </div>
         </form>
+        <p class="results-summary reveal-on-scroll">
+            Showing <?php echo count($universities); ?> universities<?php echo $searchTerm !== '' ? ' for "' . htmlspecialchars($searchTerm) . '"' : ''; ?>.
+            <?php if ($searchTerm !== ''): ?>
+                <a href="universities.php">Show all</a>
+            <?php endif; ?>
+        </p>
         <?php if ($universities): ?>
             <div class="university-grid">
                 <?php foreach ($universities as $university): ?>
@@ -161,24 +145,6 @@ include 'includes/header.php';
             <p class="no-results">No universities match that search yet — try another keyword.</p>
         <?php endif; ?>
 
-        <?php if ($totalPages > 1): ?>
-            <div class="pagination reveal-on-scroll">
-                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <?php
-                    $query = ['page' => $i];
-                    if ($searchTerm !== '') {
-                        $query['search'] = $searchTerm;
-                    }
-                    $link = 'universities.php?' . http_build_query($query);
-                    ?>
-                    <?php if ($i === $page): ?>
-                        <span class="current"><?php echo $i; ?></span>
-                    <?php else: ?>
-                        <a href="<?php echo $link; ?>"><?php echo $i; ?></a>
-                    <?php endif; ?>
-                <?php endfor; ?>
-            </div>
-        <?php endif; ?>
     </div>
 </section>
 
