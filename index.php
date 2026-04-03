@@ -39,8 +39,6 @@ include 'includes/user_prefs_popup.php';
     </div>
 </section>
 
-<?php include 'includes/user_prefs_reports.php'; ?>
-
 <section class="section-shell bento-section" aria-label="Bento grid">
     <div class="container">
         <div class="bento-section-header">

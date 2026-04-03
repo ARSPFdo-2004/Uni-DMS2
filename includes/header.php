@@ -5,6 +5,7 @@ $navLinks = [
     'index.php' => 'Home',
     'universities.php' => 'Universities',
     'finder.php' => 'Z-Score Finder',
+    'reports.php' => 'Reports',
     'gallery.php' => 'Gallery',
     'about.php' => 'About'
 ];

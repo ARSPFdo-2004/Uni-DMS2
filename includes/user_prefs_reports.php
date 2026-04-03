@@ -63,7 +63,6 @@ $degOverall = getTopDegrees($conn, null, $totO);
 
 <section class="section-shell" style="padding-top: 3rem; background: var(--surface-light); padding-bottom: 5rem;">
     <div class="container">
-        <h2 style="text-align:center; margin-bottom: 3rem; font-size: 2.2rem; color: var(--dark-800);">Student Preference Analytics</h2>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
             
@@ -129,6 +128,27 @@ document.addEventListener("DOMContentLoaded", function() {
                 indexAxis: 'y', // Makes it horizontal
                 responsive: true,
                 maintainAspectRatio: false,
+                onHover: (e, activeElements, chart) => {
+                    const canvas = chart.canvas;
+                    if(activeElements.length > 0) {
+                        // Hovering over a bar
+                        canvas.style.cursor = 'pointer';
+                        canvas.title = labels[activeElements[0].index];
+                    } else {
+                        // Check if hovering over y-axis labels
+                        const yAxis = chart.scales.y;
+                        if(e.x >= yAxis.left && e.x <= yAxis.right && e.y >= yAxis.top && e.y <= yAxis.bottom) {
+                            const val = yAxis.getValueForPixel(e.y);
+                            if(val >= 0 && val < labels.length) {
+                                canvas.title = labels[val];
+                                canvas.style.cursor = 'pointer';
+                                return;
+                            }
+                        }
+                        canvas.style.cursor = 'default';
+                        canvas.title = '';
+                    }
+                },
                 scales: {
                     x: {
                         display: false, // hide completely so there's no bottom axis
