@@ -46,14 +46,6 @@ nav {
     justify-self: center;
 }
 
-.floating-navbar__brand-mark {
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    background: var(--accent-500);
-    box-shadow: 0 0 12px var(--accent-glow);
-}
-
 .nav-links {
     display: flex;
     gap: var(--space-4);

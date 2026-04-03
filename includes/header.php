@@ -38,7 +38,6 @@ $currentScript = basename($_SERVER['PHP_SELF']);
     <header class="floating-navbar">
         <div class="floating-navbar__brand">
             <a class="floating-navbar__brand-link" href="index.php">
-                <span class="floating-navbar__brand-mark" aria-hidden="true"></span>
                 <span>Uni-DMS</span>
             </a>
         </div>
