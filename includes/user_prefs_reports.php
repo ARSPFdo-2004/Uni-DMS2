@@ -65,46 +65,49 @@ $degOverall = getTopDegrees($conn, null, $totO);
     <div class="container">
         <h2 style="text-align:center; margin-bottom: 3rem; font-size: 2.2rem; color: var(--dark-800);">Student Preference Analytics</h2>
         
-        <!-- Stream Preferences (Both Boys and Girls) -->
-        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300); margin-bottom: 3rem;">
-            <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-chart-line"></i> Stream Preferences</h3>
-            <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Comparison between boys and girls across all collected preferences.</p>
-            <div style="position: relative; height: 350px; width: 100%;">
-                <canvas id="streamChart"></canvas>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+            
+            <!-- Stream Preferences (Both Boys and Girls) -->
+            <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
+                <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-chart-line"></i> Stream Preferences</h3>
+                <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Comparison between boys and girls across all collected preferences.</p>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="streamChart"></canvas>
+                </div>
+                <?php if(empty(array_filter($streamBoysData)) && empty(array_filter($streamGirlsData))) echo '<p style="text-align:center; margin-top: -150px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
             </div>
-            <?php if(empty(array_filter($streamBoysData)) && empty(array_filter($streamGirlsData))) echo '<p style="text-align:center; margin-top: -200px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
-        </div>
-        
-        <!-- Highest Demanded Degrees - Boys -->
-        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300); margin-bottom: 3rem;">
-            <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-male"></i> Highest Demanded Degree: Boys</h3>
-            <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Top 5 degrees demanded specifically by male users (includes the preferred University).</p>
-            <div style="position: relative; height: 350px; width: 100%;">
-                <canvas id="boysChart"></canvas>
+            
+            <!-- Highest Demanded Degrees - Boys -->
+            <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
+                <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-male"></i> Highest Demand: Boys</h3>
+                <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Top 5 degrees demanded specifically by male users (includes the preferred University).</p>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="boysChart"></canvas>
+                </div>
+                <?php if(empty($degBoys['labels'])) echo '<p style="text-align:center; margin-top: -150px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
             </div>
-            <?php if(empty($degBoys['labels'])) echo '<p style="text-align:center; margin-top: -200px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
-        </div>
 
-        <!-- Highest Demanded Degrees - Girls -->
-        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300); margin-bottom: 3rem;">
-            <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-female"></i> Highest Demanded Degree: Girls</h3>
-            <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Top 5 degrees demanded specifically by female users (includes the preferred University).</p>
-            <div style="position: relative; height: 350px; width: 100%;">
-                <canvas id="girlsChart"></canvas>
+            <!-- Highest Demanded Degrees - Girls -->
+            <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
+                <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-female"></i> Highest Demand: Girls</h3>
+                <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">Top 5 degrees demanded specifically by female users (includes the preferred University).</p>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="girlsChart"></canvas>
+                </div>
+                <?php if(empty($degGirls['labels'])) echo '<p style="text-align:center; margin-top: -150px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
             </div>
-            <?php if(empty($degGirls['labels'])) echo '<p style="text-align:center; margin-top: -200px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
-        </div>
 
-        <!-- Highest Demanded Degrees - Overall -->
-        <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300); margin-bottom: 3rem;">
-            <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-globe"></i> Highest Demanded Degree: Overall</h3>
-            <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">The top 5 overall demanded degrees combined (includes the preferred University).</p>
-            <div style="position: relative; height: 350px; width: 100%;">
-                <canvas id="overallChart"></canvas>
+            <!-- Highest Demanded Degrees - Overall -->
+            <div style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
+                <h3 style="color: var(--primary-600); margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-globe"></i> Highest Demand: Overall</h3>
+                <p style="font-size: 0.95rem; color: var(--dark-500); margin-bottom: 1.5rem;">The top 5 overall demanded degrees combined (includes the preferred University).</p>
+                <div style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="overallChart"></canvas>
+                </div>
+                <?php if(empty($degOverall['labels'])) echo '<p style="text-align:center; margin-top: -150px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
             </div>
-            <?php if(empty($degOverall['labels'])) echo '<p style="text-align:center; margin-top: -200px; color: var(--dark-400);">Not enough data yet.</p>'; ?>
+            
         </div>
-        
     </div>
 </section>
 
@@ -167,14 +170,14 @@ document.addEventListener("DOMContentLoaded", function() {
             label: 'Boys',
             data: <?php echo json_encode($streamBoysData); ?>,
             backgroundColor: 'rgba(59, 130, 246, 0.85)', // Blue
-            barThickness: 12,
+            maxBarThickness: 12,
             borderRadius: 4
         },
         {
             label: 'Girls',
             data: <?php echo json_encode($streamGirlsData); ?>,
             backgroundColor: 'rgba(236, 72, 153, 0.85)', // Pink
-            barThickness: 12,
+            maxBarThickness: 12,
             borderRadius: 4
         }
     ]);
@@ -184,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function() {
         label: 'Demand',
         data: <?php echo json_encode($degBoys['data']); ?>,
         backgroundColor: 'rgba(59, 130, 246, 0.85)', // Blue
-        barThickness: 12,
+        maxBarThickness: 12,
         borderRadius: 4
     }]);
 
@@ -193,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function() {
         label: 'Demand',
         data: <?php echo json_encode($degGirls['data']); ?>,
         backgroundColor: 'rgba(236, 72, 153, 0.85)', // Pink
-        barThickness: 12,
+        maxBarThickness: 12,
         borderRadius: 4
     }]);
 
@@ -202,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function() {
         label: 'Demand',
         data: <?php echo json_encode($degOverall['data']); ?>,
         backgroundColor: 'rgba(16, 185, 129, 0.85)', // Green
-        barThickness: 12,
+        maxBarThickness: 12,
         borderRadius: 4
     }]);
 });

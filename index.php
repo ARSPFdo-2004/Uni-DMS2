@@ -41,7 +41,6 @@ include 'includes/user_prefs_popup.php';
 
 <?php include 'includes/user_prefs_reports.php'; ?>
 
-<div class="page-transition" aria-hidden="true"></div>
 <section class="section-shell bento-section" aria-label="Bento grid">
     <div class="container">
         <div class="bento-section-header">
