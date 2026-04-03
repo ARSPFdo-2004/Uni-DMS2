@@ -125,7 +125,8 @@ include "includes/header.php";
 <!-- Wrap the middle section in a container with a white background -->
 <main style="background-color: #ffffff;">
 <style>
-    main, main h1, main h3, main p, main label, main input, main select, main option, main .btn-ghost, main .eyebrow {
+    /* target everything except the page-hero section */
+    main .section-shell, main .section-shell h1, main .section-shell h3, main .section-shell p, main .section-shell label, main .section-shell input, main .section-shell select, main .section-shell option, main .section-shell .btn-ghost, main .section-shell .eyebrow {
         color: #000000 !important;
     }
     main .btn-primary {
@@ -269,6 +270,14 @@ include "includes/header.php";
                         <?php if ($searchMode === 'name'): ?>
                             <?php foreach ($degrees as $index => $deg): ?>
                                 <?php
+                                $dNameUpper = strtoupper($deg["degree_name"]);
+                                $durationTxt = "4 years";
+                                if (strpos($dNameUpper, 'SIDDHA MEDICINE') !== false) {
+                                    $durationTxt = "6 years";
+                                } elseif (strpos($dNameUpper, 'MEDICINE') !== false || strpos($dNameUpper, 'DENTAL SURGERY') !== false || strpos($dNameUpper, 'VETERINARY SCIENCE') !== false) {
+                                    $durationTxt = "5 years";
+                                }
+
                                 $curriculumMap = [
                                     'moratuwa' => 'https://uom.lk/eugs/curriculam',
                                     'colombo' => 'https://cmb.ac.lk/undergraduate-programmes',
@@ -303,7 +312,7 @@ include "includes/header.php";
                                         <p style="font-size: 1.1rem; color: #555; margin-bottom: 24px;"><strong>University:</strong> <?php echo htmlspecialchars($deg["university_name"]); ?></p>
                                         
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                                            <div><strong style="color: #666;">Duration:</strong> <br>4 years</div>
+                                            <div><strong style="color: #666;">Duration:</strong> <br><?php echo $durationTxt; ?></div>
                                             <div><strong style="color: #666;">Medium:</strong> <br>English</div>
                                             <div><strong style="color: #666;">Subject Req 1:</strong> <br><?php echo !empty($deg["subject1"]) ? htmlspecialchars($deg["subject1"]) : "-"; ?></div>
                                             <div><strong style="color: #666;">Subject Req 2:</strong> <br><?php echo !empty($deg["subject2"]) ? htmlspecialchars($deg["subject2"]) : "-"; ?></div>
@@ -375,6 +384,14 @@ include "includes/header.php";
                                 <tbody>
                                 <?php foreach ($degrees as $index => $deg): ?>
                                     <?php
+                                    $dNameUpper = strtoupper($deg["degree_name"]);
+                                    $durationTxt = "4 years";
+                                    if (strpos($dNameUpper, 'SIDDHA MEDICINE') !== false) {
+                                        $durationTxt = "6 years";
+                                    } elseif (strpos($dNameUpper, 'MEDICINE') !== false || strpos($dNameUpper, 'DENTAL SURGERY') !== false || strpos($dNameUpper, 'VETERINARY SCIENCE') !== false) {
+                                        $durationTxt = "5 years";
+                                    }
+
                                     $curriculumMap = [
                                         'moratuwa' => 'https://uom.lk/eugs/curriculam',
                                         'colombo' => 'https://cmb.ac.lk/undergraduate-programmes',
@@ -404,7 +421,7 @@ include "includes/header.php";
                                     <tr id="row-<?php echo $index; ?>" style="border-bottom: 1px solid #f1f1f1; transition: background 0.2s;">
                                         <td style="padding: 16px; color: #333; font-weight: 500;"><?php echo htmlspecialchars($deg["degree_name"]); ?></td>
                                         <td style="padding: 16px; color: #555;"><?php echo htmlspecialchars($deg["university_name"]); ?></td>
-                                        <td style="padding: 16px; color: #555;">4 years</td>
+                                        <td style="padding: 16px; color: #555;"><?php echo $durationTxt; ?></td>
                                         <td style="padding: 16px; color: #555;">English</td>
                                         <td style="padding: 16px; color: #555;">
                                             <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
@@ -428,7 +445,7 @@ include "includes/header.php";
                                                     <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
                                                         <div><strong style="color: #666;">Cutoff:</strong> <br><?php echo htmlspecialchars($deg["cutoff"]); ?></div>
                                                     <?php endif; ?>
-                                                    <div><strong style="color: #666;">Duration:</strong> <br>4 years</div>
+                                                    <div><strong style="color: #666;">Duration:</strong> <br><?php echo $durationTxt; ?></div>
                                                     <div><strong style="color: #666;">Medium:</strong> <br>English</div>
                                                 </div>
                                                 

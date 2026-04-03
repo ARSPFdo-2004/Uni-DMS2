@@ -70,6 +70,11 @@ $rankedIds = array_map(function ($item) {
 
 include 'includes/header.php';
 ?>
+<style>
+    .page-hero {
+        background-color: #0A0E1A !important;
+    }
+</style>
 <section class="page-hero reveal-on-scroll" aria-label="Universities hero">
     <div class="container">
         <p class="eyebrow">Universities</p>
