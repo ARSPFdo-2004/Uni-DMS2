@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/db.php';
+require_once 'includes/require_user_details.php';
 require_once 'includes/ui-helpers.php';
 
 $pageTitle = 'Universities';

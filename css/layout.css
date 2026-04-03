@@ -32,10 +32,10 @@ body {
     position: relative;
     background: var(--dark-900);
     color: var(--text-on-dark-primary);
-    min-height: 700px;
+    min-height: 250px;
     display: flex;
     align-items: flex-start;
-    padding: clamp(100px, 10vw, 140px) var(--page-padding) clamp(32px, 6vw, 64px);
+    padding: clamp(80px, 8vw, 100px) var(--page-padding) clamp(24px, 4vw, 40px);
     overflow: hidden;
 }
 

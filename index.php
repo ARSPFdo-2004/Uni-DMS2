@@ -1,7 +1,12 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once 'includes/db.php';
+
 $pageTitle = 'Home';
 $pageStyles = ['css/pages/home.css'];
+
 include 'includes/header.php';
+include 'includes/user_prefs_popup.php';
 ?>
 <section class="page-hero hero-dot-grid home-hero reveal-on-scroll" aria-label="Home hero">
     <div class="hero-orbs">
@@ -33,7 +38,7 @@ include 'includes/header.php';
         </div>
     </div>
 </section>
-<div class="page-transition" aria-hidden="true"></div>
+
 <section class="section-shell bento-section" aria-label="Bento grid">
     <div class="container">
         <div class="bento-section-header">
@@ -59,4 +64,7 @@ include 'includes/header.php';
         </div>
     </div>
 </section>
+
 <?php include 'includes/footer.php'; ?>
+
+

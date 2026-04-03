@@ -1,5 +1,6 @@
 <?php
 require_once "includes/db.php";
+require_once "includes/require_user_details.php";
 
 $pageTitle = "Z-Score Finder";
 $pageStyles = ["css/pages/finder.css"];
@@ -74,9 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     } elseif (isset($_POST["name_search"])) {
         $searchMode = "name";
-        // To use dropdowns for both degree name and university, we check if they are provided
-        if (!empty(trim($degreeSearchName))) {
-            $likeDegree = "%" . $degreeSearchName . "%";
+        
+        $hasDegree = !empty(trim($degreeSearchName));
+        $hasUni = !empty($searchUniversity);
+        
+        if ($hasDegree || $hasUni) {
             $query = "
                 SELECT f.*, 
                        MAX(d.duration) as duration, 
@@ -85,25 +88,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                        MAX(d.department_id) as dept_id
                 FROM flat_zscores f 
                 LEFT JOIN degrees d ON f.degree_name = d.name
-                WHERE f.degree_name LIKE ?";
+                WHERE 1=1 ";
             
-            $types = "s";
-            $params = [$likeDegree];
+            $types = "";
+            $params = [];
             
-            if (!empty($searchUniversity)) {
+            if ($hasDegree) {
+                $query .= " AND f.degree_name LIKE ?";
+                $types .= "s";
+                $params[] = "%" . trim($degreeSearchName) . "%";
+            }
+            
+            if ($hasUni) {
                 $query .= " AND f.university_name = ?";
                 $types .= "s";
-                $params[] = $searchUniversity;
+                $params[] = trim($searchUniversity);
             }
+            
             $query .= " GROUP BY f.id ORDER BY f.degree_name ASC";
             
             $stmt = $conn->prepare($query);
-            $stmt->bind_param($types, ...$params);
+            if (!empty($types)) {
+                $stmt->bind_param($types, ...$params);
+            }
             $stmt->execute();
             $degrees = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
         } else {
-            $error = "Please enter a degree name to search.";
+            $error = "Please enter a degree name or select a university.";
         }
     }
 }
@@ -205,11 +217,11 @@ include "includes/header.php";
             <!-- Degree Name Search Form -->
             <form class="finder-stage reveal-on-scroll" method="POST" action="finder.php#results" style="flex:1; min-width: 300px; height: fit-content;">
                 <input type="hidden" name="name_search" value="1">
-                <h3 style="margin-bottom: 16px;">Search by Degree Name & University</h3>
+                <h3 style="margin-bottom: 16px;">Search Degree</h3>
                 
                 <div class="form-field" style="margin-bottom: 16px;">
                     <label>Degree Name</label>
-                    <input type="text" id="searchInput" name="search_degree_name" list="degreeNameOptions" placeholder="" value="<?php echo htmlspecialchars($degreeSearchName); ?>" required style="width:100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <input type="text" id="searchInput" name="search_degree_name" list="degreeNameOptions" placeholder="Optional if university is selected" value="<?php echo htmlspecialchars($degreeSearchName); ?>" style="width:100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
                     <datalist id="degreeNameOptions">
                         <?php foreach($degreeNamesList as $dn): ?>
                             <option value="<?php echo htmlspecialchars($dn); ?>"></option>
@@ -245,6 +257,33 @@ include "includes/header.php";
                     <div style="overflow-x:auto;">
                         <?php if ($searchMode === 'name'): ?>
                             <?php foreach ($degrees as $index => $deg): ?>
+                                <?php
+                                $curriculumMap = [
+                                    'moratuwa' => 'https://uom.lk/eugs/curriculam',
+                                    'colombo' => 'https://cmb.ac.lk/undergraduate-programmes',
+                                    'jayewardenepura' => 'https://www.sjp.ac.lk/undergraduate-courses/',
+                                    'trincomalee' => 'https://www.tc.esn.ac.lk/',
+                                    'south eastern' => 'https://www.seu.ac.lk/undergraduate_studies.php',
+                                    'eastern' => 'https://esn.ac.lk/academic-programs/undergraduate',
+                                    'kelaniya' => 'https://cdce.kln.ac.lk/',
+                                    'sabaragamuwa' => 'https://www.sab.ac.lk/',
+                                    'rajarata' => 'https://www.rjt.ac.lk/courses/',
+                                    'jaffna' => 'https://jfn.ac.lk/degree-programmes/',
+                                    'ruhuna' => 'https://docslib.org/doc/247346/student-handbook#google_vignette',
+                                    'vavuniya' => 'https://www.vau.ac.lk/degree-programmes/',
+                                    'uva wellassa' => '#',
+                                    'wayamba' => 'https://wyb.ac.lk/',
+                                    'peradeniya' => 'https://www.pdn.ac.lk/Download',
+                                    'gampaha' => 'https://gwu.ac.lk/index.php/undergraduate'
+                                ];
+                                $curriculumLink = '#';
+                                foreach ($curriculumMap as $key => $link) {
+                                    if (stripos($deg["university_name"], $key) !== false) {
+                                        $curriculumLink = $link;
+                                        break;
+                                    }
+                                }
+                                ?>
                                 <div style="margin-bottom: 48px; background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-wrap: wrap;">
                                     
                                     <!-- Degree Details (Left side) -->
@@ -253,21 +292,28 @@ include "includes/header.php";
                                         <p style="font-size: 1.1rem; color: #555; margin-bottom: 24px;"><strong>University:</strong> <?php echo htmlspecialchars($deg["university_name"]); ?></p>
                                         
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                                            <div><strong style="color: #666;">Duration:</strong> <br><?php echo !empty($deg["duration"]) ? htmlspecialchars($deg["duration"]) : "Not Specified"; ?></div>
-                                            <div><strong style="color: #666;">Medium:</strong> <br><?php echo !empty($deg["medium"]) ? htmlspecialchars($deg["medium"]) : "Not Specified"; ?></div>
+                                            <div><strong style="color: #666;">Duration:</strong> <br>4 years</div>
+                                            <div><strong style="color: #666;">Medium:</strong> <br>English</div>
                                             <div><strong style="color: #666;">Subject Req 1:</strong> <br><?php echo !empty($deg["subject1"]) ? htmlspecialchars($deg["subject1"]) : "-"; ?></div>
                                             <div><strong style="color: #666;">Subject Req 2:</strong> <br><?php echo !empty($deg["subject2"]) ? htmlspecialchars($deg["subject2"]) : "-"; ?></div>
                                             <div><strong style="color: #666;">Subject Req 3:</strong> <br><?php echo !empty($deg["subject3"]) ? htmlspecialchars($deg["subject3"]) : "-"; ?></div>
                                         </div>
                                         
                                         <?php if(!empty($deg["description"])): ?>
-                                            <div style="background: #f8f9fa; padding: 16px; border-radius: 6px;">
+                                            <div style="background: #f8f9fa; padding: 16px; border-radius: 6px; margin-bottom: 16px;">
                                                 <strong style="color: #666;">Description:</strong>
                                                 <p style="margin-top: 8px; color: #444; font-size: 0.95rem; line-height: 1.5;"><?php echo htmlspecialchars($deg["description"]); ?></p>
                                             </div>
                                         <?php endif; ?>
+                                        
+                                        <div style="margin-top: auto;">
+                                            <a href="<?php echo htmlspecialchars($curriculumLink); ?>" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; background: #0056b3; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                                                <i class="fa-solid fa-book" style="margin-right: 6px;"></i> Curriculum
+                                            </a>
+                                        </div>
                                     </div>
 
+                                    <?php if (!empty(trim($degreeSearchName))): ?>
                                     <!-- Cutoffs Table (Right side vertical) -->
                                     <div style="flex: 1; min-width: 300px; max-height: 480px; overflow-y: auto;">
                                         <table style="width:100%; border-collapse: collapse; text-align: left;">
@@ -300,6 +346,7 @@ include "includes/header.php";
                                             </tbody>
                                         </table>
                                     </div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -308,15 +355,46 @@ include "includes/header.php";
                                     <tr style="border-bottom: 2px solid #eaeaea;">
                                         <th style="padding: 16px;">Degree</th>
                                         <th style="padding: 16px;">University</th>
+                                        <th style="padding: 16px;">Duration</th>
+                                        <th style="padding: 16px;">Medium</th>
                                         <th style="padding: 16px;">Z-Score Cutoff</th>
                                         <th style="padding: 16px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 <?php foreach ($degrees as $index => $deg): ?>
+                                    <?php
+                                    $curriculumMap = [
+                                        'moratuwa' => 'https://uom.lk/eugs/curriculam',
+                                        'colombo' => 'https://cmb.ac.lk/undergraduate-programmes',
+                                        'jayewardenepura' => 'https://www.sjp.ac.lk/undergraduate-courses/',
+                                        'trincomalee' => 'https://www.tc.esn.ac.lk/',
+                                        'south eastern' => 'https://www.seu.ac.lk/undergraduate_studies.php',
+                                        'eastern' => 'https://esn.ac.lk/academic-programs/undergraduate',
+                                        'kelaniya' => 'https://cdce.kln.ac.lk/',
+                                        'sabaragamuwa' => 'https://www.sab.ac.lk/',
+                                        'rajarata' => 'https://www.rjt.ac.lk/courses/',
+                                        'jaffna' => 'https://jfn.ac.lk/degree-programmes/',
+                                        'ruhuna' => 'https://docslib.org/doc/247346/student-handbook#google_vignette',
+                                        'vavuniya' => 'https://www.vau.ac.lk/degree-programmes/',
+                                        'uva wellassa' => '#',
+                                        'wayamba' => 'https://wyb.ac.lk/',
+                                        'peradeniya' => 'https://www.pdn.ac.lk/Download',
+                                        'gampaha' => 'https://gwu.ac.lk/index.php/undergraduate'
+                                    ];
+                                    $curriculumLink = '#';
+                                    foreach ($curriculumMap as $key => $link) {
+                                        if (stripos($deg["university_name"], $key) !== false) {
+                                            $curriculumLink = $link;
+                                            break;
+                                        }
+                                    }
+                                    ?>
                                     <tr id="row-<?php echo $index; ?>" style="border-bottom: 1px solid #f1f1f1; transition: background 0.2s;">
                                         <td style="padding: 16px; color: #333; font-weight: 500;"><?php echo htmlspecialchars($deg["degree_name"]); ?></td>
                                         <td style="padding: 16px; color: #555;"><?php echo htmlspecialchars($deg["university_name"]); ?></td>
+                                        <td style="padding: 16px; color: #555;">4 years</td>
+                                        <td style="padding: 16px; color: #555;">English</td>
                                         <td style="padding: 16px; color: #555;">
                                             <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
                                                 <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-weight: bold;"><?php echo htmlspecialchars($deg["cutoff"]); ?></span>
@@ -339,8 +417,8 @@ include "includes/header.php";
                                                     <?php if(isset($deg["cutoff"]) && $deg["cutoff"] !== null): ?>
                                                         <div><strong style="color: #666;">Cutoff:</strong> <br><?php echo htmlspecialchars($deg["cutoff"]); ?></div>
                                                     <?php endif; ?>
-                                                    <div><strong style="color: #666;">Duration:</strong> <br><?php echo !empty($deg["duration"]) ? htmlspecialchars($deg["duration"]) : "No details"; ?></div>
-                                                    <div><strong style="color: #666;">Medium:</strong> <br><?php echo !empty($deg["medium"]) ? htmlspecialchars($deg["medium"]) : "No details"; ?></div>
+                                                    <div><strong style="color: #666;">Duration:</strong> <br>4 years</div>
+                                                    <div><strong style="color: #666;">Medium:</strong> <br>English</div>
                                                 </div>
                                                 
                                                 <?php if(!empty($deg["description"])): ?>
@@ -354,6 +432,9 @@ include "includes/header.php";
                                                     <?php if (!empty($deg["university_id"])): ?>
                                                         <a class="btn btn-primary" href="university.php?id=<?php echo $deg["university_id"]; ?>">Go to University Page &rarr;</a>
                                                     <?php endif; ?>
+                                                    <a href="<?php echo htmlspecialchars($curriculumLink); ?>" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; background: #0056b3; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                                                        <i class="fa-solid fa-book" style="margin-right: 6px;"></i> Curriculum
+                                                    </a>
                                                 </div>
                                             </fieldset>
                                         </td>
