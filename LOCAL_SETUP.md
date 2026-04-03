@@ -1,4 +1,4 @@
-# Uni-DMS — Local Setup Guide (XAMPP)
+# UGrad — Local Setup Guide (XAMPP)
 
 ## Requirements
 - XAMPP with MySQL 8.0+ and PHP 7.4+

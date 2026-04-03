@@ -11,7 +11,7 @@ $footerNav = [
                 <div class="footer-brand-section">
                     <div class="footer-logo">
                         <div class="footer-logo-mark"></div>
-                        <span class="footer-logo-text">Uni-DMS</span>
+                        <span class="footer-logo-text">UGrad</span>
                     </div>
                     <p class="footer-description">Sri Lanka's calm authority for the university decision. Empowers students with data-driven insights for a brighter future.</p>
                     <div class="footer-socials">
@@ -52,7 +52,7 @@ $footerNav = [
 
             <div class="footer-bottom">
                 <div class="footer-bottom-content">
-                    <p class="copyright">&copy; <?php echo date('Y'); ?> <span class="accent">Uni-DMS</span>. Guiding Sri Lanka's next generation with calm authority.</p>
+                    <p class="copyright">&copy; <?php echo date('Y'); ?> <span class="accent">UGrad</span>. Guiding Sri Lanka's next generation with calm authority.</p>
                     <div class="footer-legal-links">
                         <a href="#">Privacy Policy</a>
                         <a href="#">Terms of Service</a>

@@ -64,7 +64,7 @@ if ($res) {
 
 <div id="prefPopupOverlay" class="pref-popup-overlay">
     <div class="pref-popup-box">
-        <h2>Welcome to Uni-DMS</h2>
+        <h2>Welcome to UGrad</h2>
         <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.95rem;">Please enter your email to continue.</p>
         
         <!-- Step 1: Email Check -->

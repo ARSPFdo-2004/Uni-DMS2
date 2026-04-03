@@ -18,7 +18,7 @@ $currentScript = basename($_SERVER['PHP_SELF']);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0A0E1A">
-    <title>Uni-DMS | <?php echo htmlspecialchars($pageTitle); ?></title>
+    <title>UGrad | <?php echo htmlspecialchars($pageTitle); ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@ $currentScript = basename($_SERVER['PHP_SELF']);
     <header class="floating-navbar">
         <div class="floating-navbar__brand">
             <a class="floating-navbar__brand-link" href="index.php">
-                <span>Uni-DMS</span>
+                <span>UGrad</span>
             </a>
         </div>
         <nav>
