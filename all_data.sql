@@ -314,7 +314,7 @@ CREATE TABLE `user_preferences` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,7 +323,7 @@ CREATE TABLE `user_preferences` (
 
 LOCK TABLES `user_preferences` WRITE;
 /*!40000 ALTER TABLE `user_preferences` DISABLE KEYS */;
-INSERT INTO `user_preferences` VALUES (1,'praveen','a.r.s.praveenfernando@gmail.com','Male','Physical Science','University of Moratuwa','ARTIFICIAL INTELLIGENCE','2026-04-03 05:28:24'),(2,'rajeewa','fassainssin@gmail.com','Male','Physical Science','University of Moratuwa','ENGINEERING','2026-04-03 05:35:47'),(3,'sudarsha','vergin.fernando@gmail.com','Male','Commerce','University of Sri Jayewardenepura','MEDICINE','2026-04-03 05:58:53');
+INSERT INTO `user_preferences` VALUES (1,'praveen','a.r.s.praveenfernando@gmail.com','Male','Physical Science','University of Moratuwa','ARTIFICIAL INTELLIGENCE','2026-04-03 05:28:24'),(2,'rajeewa','fassainssin@gmail.com','Male','Physical Science','University of Moratuwa','ENGINEERING','2026-04-03 05:35:47'),(3,'sudarsha','vergin.fernando@gmail.com','Male','Commerce','University of Sri Jayewardenepura','MEDICINE','2026-04-03 05:58:53'),(4,'praveen','rxckdeaddogs@gmail.com','Male','Physical Science','University of Moratuwa','DESIGN','2026-04-03 06:23:45'),(5,'jhhg','ramanathan.praveen456@gmail.com','Male','Engineering Technology','University of Peradeniya','ENGINEERING','2026-04-03 07:11:37');
 /*!40000 ALTER TABLE `user_preferences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -398,4 +398,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-03 11:43:58
+-- Dump completed on 2026-04-03 13:48:27
