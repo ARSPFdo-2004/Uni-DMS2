@@ -12,15 +12,18 @@ $page = max(1, (int) ($_GET['page'] ?? 1));
 $offset = ($page - 1) * $perPage;
 $totalRecords = 0;
 $universities = [];
-$whereClause = '';
+$whereClause = ' WHERE name IS NOT NULL AND TRIM(name) <> ?';
 $params = [];
-$paramTypes = '';
+$paramTypes = 's';
+
+$placeholderNames = ['Unknown University'];
+$params[] = $placeholderNames[0];
 
 if ($searchTerm !== '') {
-    $whereClause = ' WHERE name LIKE ? OR location LIKE ? OR description LIKE ?';
+    $whereClause .= ' AND (name LIKE ? OR location LIKE ? OR description LIKE ?)';
     $like = "%{$searchTerm}%";
-    $params = [$like, $like, $like];
-    $paramTypes = 'sss';
+    $params = array_merge($params, [$like, $like, $like]);
+    $paramTypes .= 'sss';
 }
 
 $countQuery = 'SELECT COUNT(*) AS total FROM universities' . $whereClause;

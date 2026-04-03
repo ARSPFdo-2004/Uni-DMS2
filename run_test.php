@@ -1,0 +1,1 @@
+<?php require_once 'C:\xampp\htdocs\Uni-DMS2\includes\db.php'; $r = $conn->query('SELECT name, image FROM universities'); while($row = $r->fetch_assoc()) { echo $row['name'].'|'.$row['image'].PHP_EOL; } ?>
