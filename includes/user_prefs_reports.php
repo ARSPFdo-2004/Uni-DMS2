@@ -62,8 +62,55 @@ $degOverall = getTopDegreesData($conn, null, $totO);
 ?>
 
 <style>
+    .reports-section {
+        padding-top: 3rem;
+        padding-bottom: 5rem;
+        background: var(--surface-light);
+    }
+
+    .report-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-8);
+    }
+
+    .report-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+        min-height: 100%;
+        padding: var(--space-8);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(59, 130, 246, 0.18);
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.96) 100%);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(14px) saturate(130%);
+        -webkit-backdrop-filter: blur(14px) saturate(130%);
+    }
+
+    .report-card__title {
+        margin: 0;
+        font-size: clamp(1.2rem, 2vw, 1.45rem);
+        color: var(--text-on-dark-primary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .report-card__subtitle {
+        margin: 0;
+        font-size: var(--text-sm);
+        color: var(--text-on-dark-secondary);
+    }
+
+    .report-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
     .report-item {
-        margin-bottom: 1.5rem;
+        margin-bottom: var(--space-4);
     }
 
     .report-item:last-child {
@@ -73,7 +120,7 @@ $degOverall = getTopDegreesData($conn, null, $totO);
     .report-title {
         font-size: 0.95rem;
         font-weight: 600;
-        color: black;
+        color: var(--text-on-dark-primary);
         margin-bottom: 0.5rem;
         white-space: nowrap;
         overflow: hidden;
@@ -81,7 +128,7 @@ $degOverall = getTopDegreesData($conn, null, $totO);
     }
 
     .report-title span {
-        color: #333;
+        color: var(--text-on-dark-secondary);
         font-weight: 400;
     }
 
@@ -91,9 +138,13 @@ $degOverall = getTopDegreesData($conn, null, $totO);
         gap: 12px;
     }
 
+    .report-bar-row--spaced {
+        margin-bottom: 6px;
+    }
+
     .report-bar-wrap {
         flex: 1;
-        background: #eef2f6;
+        background: rgba(148, 163, 184, 0.18);
         height: 10px;
         border-radius: 6px;
         overflow: hidden;
@@ -122,39 +173,49 @@ $degOverall = getTopDegreesData($conn, null, $totO);
         font-size: 0.8rem;
         text-align: right;
         font-weight: bold;
-        color: black;
+        color: var(--text-on-dark-primary);
     }
 
     .report-gender-lbl {
         width: 36px;
         font-size: 0.75rem;
-        color: #333;
+        color: var(--text-on-dark-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+
+    .report-empty {
+        margin: 0;
+        color: var(--text-on-dark-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .report-card {
+            padding: var(--space-6);
+        }
+    }
 </style>
 
-<section class="section-shell" style="padding-top: 3rem; background: var(--surface-light); padding-bottom: 5rem;">
+<section class="section-shell reports-section">
     <div class="container">
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 2rem;">
+        <div class="report-grid">
 
-            <div
-                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
-                <h3 style="color: black; margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-chart-line"></i>
+            <div class="report-card">
+                <h3 class="report-card__title"><i class="fas fa-chart-line"></i>
                     Stream Preferences</h3>
-                <p style="font-size: 0.95rem; color: black; margin-bottom: 2rem;">Comparison between boys and
+                <p class="report-card__subtitle">Comparison between boys and
                     girls.</p>
 
                 <div class="report-content">
                     <?php if (empty(array_filter(array_column($streamsData, 'boys'))) && empty(array_filter(array_column($streamsData, 'girls')))): ?>
-                        <p style="color: var(--dark-400);">Not enough data yet.</p>
+                        <p class="report-empty">Not enough data yet.</p>
                     <?php else: ?>
                         <?php foreach ($streamsData as $s): ?>
                             <div class="report-item" title="<?php echo htmlspecialchars($s['name']); ?>">
                                 <div class="report-title"><?php echo htmlspecialchars($s['name']); ?></div>
 
-                                <div class="report-bar-row" style="margin-bottom: 6px;">
+                                <div class="report-bar-row report-bar-row--spaced">
                                     <div class="report-gender-lbl">Boys</div>
                                     <div class="report-bar-wrap">
                                         <div class="report-bar bg-blue" style="width: <?php echo $s['boys']; ?>%;"></div>
@@ -175,15 +236,14 @@ $degOverall = getTopDegreesData($conn, null, $totO);
                 </div>
             </div>
 
-            <div
-                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
-                <h3 style="color: black; margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-male"></i> Highest
+            <div class="report-card">
+                <h3 class="report-card__title"><i class="fas fa-male"></i> Highest
                     Demanded Degrees: Boys</h3>
-                <p style="font-size: 0.95rem; color: black; margin-bottom: 2rem;">Top 5 demanded degrees.</p>
+                <p class="report-card__subtitle">Top 5 demanded degrees.</p>
 
                 <div class="report-content">
                     <?php if (empty($degBoys)): ?>
-                        <p style="color: var(--dark-400);">Not enough data yet.</p>
+                        <p class="report-empty">Not enough data yet.</p>
                     <?php else: ?>
                         <?php foreach ($degBoys as $d): ?>
                             <div class="report-item"
@@ -204,15 +264,14 @@ $degOverall = getTopDegreesData($conn, null, $totO);
                 </div>
             </div>
 
-            <div
-                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
-                <h3 style="color: black; margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-female"></i>
+            <div class="report-card">
+                <h3 class="report-card__title"><i class="fas fa-female"></i>
                     Highest Demanded Degrees: Girls</h3>
-                <p style="font-size: 0.95rem; color: black; margin-bottom: 2rem;">Top 5 demanded degrees.</p>
+                <p class="report-card__subtitle">Top 5 demanded degrees.</p>
 
                 <div class="report-content">
                     <?php if (empty($degGirls)): ?>
-                        <p style="color: var(--dark-400);">Not enough data yet.</p>
+                        <p class="report-empty">Not enough data yet.</p>
                     <?php else: ?>
                         <?php foreach ($degGirls as $d): ?>
                             <div class="report-item"
@@ -233,15 +292,14 @@ $degOverall = getTopDegreesData($conn, null, $totO);
                 </div>
             </div>
 
-            <div
-                style="background: white; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-light-md); border: 1px solid var(--light-300);">
-                <h3 style="color: black; margin-bottom: 0.5rem; font-size: 1.5rem;"><i class="fas fa-globe"></i> Highest
+            <div class="report-card">
+                <h3 class="report-card__title"><i class="fas fa-globe"></i> Highest
                     Demanded Degrees: Overall</h3>
-                <p style="font-size: 0.95rem; color: black; margin-bottom: 2rem;">Top 5 demanded degrees.</p>
+                <p class="report-card__subtitle">Top 5 demanded degrees.</p>
 
                 <div class="report-content">
                     <?php if (empty($degOverall)): ?>
-                        <p style="color: var(--dark-400);">Not enough data yet.</p>
+                        <p class="report-empty">Not enough data yet.</p>
                     <?php else: ?>
                         <?php foreach ($degOverall as $d): ?>
                             <div class="report-item"
