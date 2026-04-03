@@ -88,12 +88,20 @@ $totalPages = (int) ceil($total / $perPage);
                     <?php
                     $imagePath = '';
                     if (!empty($row['image'])) {
-                        $uploads = __DIR__ . '/../uploads/' . $row['image'];
-                        $images = dirname(__DIR__) . '/images/' . $row['image'];
-                        if (file_exists($uploads)) {
-                            $imagePath = 'uploads/' . $row['image'];
-                        } elseif (file_exists($images)) {
-                            $imagePath = 'images/' . $row['image'];
+                        $basename = basename($row['image']);
+                        $uploads = __DIR__ . '/../uploads/' . $basename;
+                        $new_images = dirname(__DIR__) . '/images/universities/' . $basename;
+                        $old_images = dirname(__DIR__) . '/images/' . $basename;
+                        
+                        if (file_exists($new_images)) {
+                            $imagePath = '../images/universities/' . $basename;
+                        } elseif (file_exists($uploads)) {
+                            $imagePath = '../uploads/' . $basename;
+                        } elseif (file_exists($old_images)) {
+                            $imagePath = '../images/' . $basename;
+                        } else {
+                            // Fallback rendering
+                            $imagePath = '../' . $row['image'];
                         }
                     }
                     ?>

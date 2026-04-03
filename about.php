@@ -9,7 +9,7 @@ include 'includes/header.php';
         <p class="page-hero-meta">We simplify the path from A/L results to your dream career. Discover universities, find your degree, and unlock your future—all in one place.</p>
     </div>
     <div class="about-hero-image-wrap">
-        <img src="images/Graduation.jpg" alt="Students celebrating graduation" loading="lazy">
+        <img src="images/gallery/gallery14.jpg" alt="Students celebrating graduation" loading="lazy">
     </div>
 </section>
 <section class="section-shell mission-vision-section" aria-label="Mission and Vision">
@@ -43,22 +43,22 @@ include 'includes/header.php';
         <h2 class="what-we-offer-title">What We Offer</h2>
         <div class="offer-grid">
             <article class="offer-card reveal-on-scroll">
-                <div class="offer-icon" aria-hidden="true"><img src="images/degree_database_icon.png" alt="" loading="lazy"></div>
+                <div class="offer-icon" aria-hidden="true"><img src="images/icons/degree_database_icon.png" alt="" loading="lazy"></div>
                 <h3>University Database</h3>
                 <p>Detailed profiles of all recognized universities in Sri Lanka, including campus facilities and student life.</p>
             </article>
             <article class="offer-card reveal-on-scroll">
-                <div class="offer-icon" aria-hidden="true"><img src="images/degree_finder_icon.png" alt="" loading="lazy"></div>
+                <div class="offer-icon" aria-hidden="true"><img src="images/icons/degree_finder_icon.png" alt="" loading="lazy"></div>
                 <h3>Comprehensive Degree Finder</h3>
                 <p>Explore every available degree program, understand the modules, and access curated YouTube resources and study materials.</p>
             </article>
             <article class="offer-card reveal-on-scroll">
-                <div class="offer-icon" aria-hidden="true"><img src="images/z_core_calculator_icon.png" alt="" loading="lazy"></div>
+                <div class="offer-icon" aria-hidden="true"><img src="images/icons/z_core_calculator_icon.png" alt="" loading="lazy"></div>
                 <h3>Smart Z-Score Calculator</h3>
                 <p>Take the guesswork out of university admissions. Input your results and instantly see which paths are open to you.</p>
             </article>
             <article class="offer-card reveal-on-scroll">
-                <div class="offer-icon" aria-hidden="true"><img src="images/career_guidance_icon.png" alt="" loading="lazy"></div>
+                <div class="offer-icon" aria-hidden="true"><img src="images/icons/career_guidance_icon.png" alt="" loading="lazy"></div>
                 <h3>Career Guidance</h3>
                 <p>Not sure what to do next? Discover future career opportunities linked to specific degrees and get advice on how to get there.</p>
             </article>

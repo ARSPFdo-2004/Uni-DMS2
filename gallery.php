@@ -1,45 +1,142 @@
 <?php
 $pageTitle = 'Gallery';
 $pageStyles = ['css/pages/gallery.css'];
-$galleryPhotos = [
-    ['src' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=900&q=80', 'caption' => 'Sunrise over the central quadrangle'],
-    ['src' => 'https://images.unsplash.com/photo-1472457897821-70d3819a6f17?auto=format&fit=crop&w=900&q=80', 'caption' => 'Students collaborating in the studio'],
-    ['src' => 'https://images.unsplash.com/photo-1523050854059-8f0d1f6e2bca?auto=format&fit=crop&w=900&q=80', 'caption' => 'Campus library filled with late-night readers'],
-    ['src' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80', 'caption' => 'Laboratory minds exploring future tech'],
-    ['src' => 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80', 'caption' => 'Ceremonial march and proud tradition'],
-    ['src' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80', 'caption' => 'Creative minds sketching new worlds']
-];
 include 'includes/header.php';
+
+// Map specific filenames to rich content definitions
+$static_mapping = [
+    'gallery1.jpg'  => ['title' => 'FIT Sixes Cricket', 'caption' => 'Students engaged in the annual FIT Sixes 2k25 cricket match.', 'category' => 'Sports'],
+    'gallery2.jpg'  => ['title' => 'FIT Expo Drone Showcase', 'caption' => 'Engineering drone prototype displayed at FIT Expo.', 'category' => 'Science'],
+    'gallery3.jpg'  => ['title' => 'Chemical Engineering Night', 'caption' => 'Illuminated archway for the Chemical and Process Engineering social night.', 'category' => 'Events'],
+    'gallery4.jpg'  => ['title' => 'Sarasaviye Kokul Nade', 'caption' => 'Students participating in outdoor drama and cultural rehearsals.', 'category' => 'Events'],
+    'gallery5.jpg'  => ['title' => 'Thala Wasanthaya', 'caption' => 'Traditional Sri Lankan art presented by the Mass Media Club.', 'category' => 'Events'],
+    'gallery6.jpg'  => ['title' => 'Traditional Dance', 'caption' => 'Kandyan and traditional dancers performing at the Media Awards night.', 'category' => 'Events'],
+    'gallery7.jpg'  => ['title' => 'Media Awards Ceremony', 'caption' => 'Formal audience gathered for the Mass Media Club\'s award ceremony.', 'category' => 'Academic'],
+    'gallery8.jpg'  => ['title' => 'Outdoor Gathering', 'caption' => 'Students gathered at the outdoor amphitheater for Sarasaviye Kokul Nade.', 'category' => 'Events'],
+    'gallery9.jpg'  => ['title' => 'Agna \'25 Event', 'caption' => 'Intricate theatrical backdrop created for the ENTC Agna \'25 event.', 'category' => 'Events'],
+    'gallery10.jpg' => ['title' => 'Spandana Dance', 'caption' => 'Modern dance performance at the Spandana event by the Faculty of Medicine.', 'category' => 'Events'],
+    'gallery11.jpg' => ['title' => 'Coffee with the Dean', 'caption' => 'Live acoustic band performance organized by FIT Tunes.', 'category' => 'Events'],
+    'gallery12.jpg' => ['title' => 'Medical Faculty Dance', 'caption' => 'Choreographed outdoor performance at Spandana by the Art Circle.', 'category' => 'Events'],
+    'gallery13.jpg' => ['title' => 'Live Concert Drummer', 'caption' => 'High-energy drumming performance proudly presented by Mora Lenz.', 'category' => 'Events'],
+    'gallery14.jpg' => ['title' => 'Sunset Graduation', 'caption' => 'Silhouettes of proud graduates raising their caps against the twilight sky.', 'category' => 'Graduation']
+];
+
+$images = [];
+// Use glob to pull images entirely from the images/gallery folder without hitting any DB
+$gallery_files = glob("images/gallery/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}", GLOB_BRACE);
+
+if ($gallery_files) {
+    foreach ($gallery_files as $file) {
+        $basename = basename($file);
+        $file_lower = strtolower($basename);
+        
+        if (isset($static_mapping[$file_lower])) {
+            $images[] = [
+                'image_path' => $file,
+                'title'      => $static_mapping[$file_lower]['title'],
+                'caption'    => $static_mapping[$file_lower]['caption'],
+                'category'   => $static_mapping[$file_lower]['category'],
+            ];
+        } else {
+            // Fallback for any extra images found in the directory
+            $images[] = [
+                'image_path' => $file,
+                'title'      => 'Campus Life',
+                'caption'    => 'Experiences and memories from university life',
+                'category'   => 'Events',
+            ];
+        }
+    }
+}
 ?>
-<section class="page-hero reveal-on-scroll" aria-label="Gallery hero">
-    <div class="container hero-content">
-        <p class="eyebrow">Gallery</p>
-        <h1>Campus stories that bring heritage to life.</h1>
-        <p class="page-hero-meta">Explore rituals, lab breakthroughs, and the calm confidence of Sri Lankan university life.</p>
-        <div class="breadcrumb">
-            <a href="index.php">Home</a>
-            <span>/</span>
-            <span>Gallery</span>
+
+<section class="gallery-section">
+  <div class="gallery-wrap">
+
+    <!-- Page title in reference style -->
+    <div class="gallery-heading">
+      <span class="gallery-dash">—</span>
+      <h1 class="gallery-title">GALLERY</h1>
+    </div>
+
+    <?php if (empty($images)): ?>
+      <div class="gallery-empty">
+        <div class="gallery-empty__icon">🖼️</div>
+        <h3>Gallery Coming Soon</h3>
+        <p>Inspiring moments are being added shortly.</p>
+      </div>
+    <?php else: ?>
+
+      <!-- Filter bar -->
+      <div class="gallery-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Academic">Academic</button>
+        <button class="filter-btn" data-filter="Sports">Sports</button>
+        <button class="filter-btn" data-filter="Events">Events</button>
+        <button class="filter-btn" data-filter="Science">Science</button>
+        <button class="filter-btn" data-filter="Graduation">Graduation</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="gallery-grid" id="galleryGrid">
+        <?php foreach ($images as $image): ?>
+        <div class="gallery-card"
+             data-category="<?= htmlspecialchars($image['category'] ?? '') ?>">
+
+          <!-- Image + effects wrapper -->
+          <div class="gallery-card__media">
+            <img
+              src="<?= htmlspecialchars($image['image_path'] ?? $image['image_url'] ?? '') ?>"
+              alt="<?= htmlspecialchars($image['title'] ?? '') ?>"
+              loading="lazy"
+              onerror="this.closest('.gallery-card').style.display='none'"
+            >
+
+            <!-- Reflection element — clones the image via CSS -->
+            <div class="gallery-card__reflection"></div>
+          </div>
+
+          <!-- Caption bottom-left -->
+          <div class="gallery-card__caption">
+            <?= htmlspecialchars($image['caption'] ?? $image['title'] ?? '') ?>
+          </div>
+
         </div>
-    </div>
+        <?php endforeach; ?>
+      </div>
+
+    <?php endif; ?>
+  </div>
 </section>
-<section class="section-shell">
-    <div class="container gallery-wrapper">
-        <div class="gallery-grid">
-            <?php foreach ($galleryPhotos as $photo): ?>
-                <figure class="gallery-card reveal-on-scroll" data-src="<?php echo $photo['src']; ?>" data-caption="<?php echo htmlspecialchars($photo['caption']); ?>">
-                    <img src="<?php echo $photo['src']; ?>" alt="<?php echo htmlspecialchars($photo['caption']); ?>" loading="lazy">
-                    <figcaption class="gallery-caption"><?php echo htmlspecialchars($photo['caption']); ?></figcaption>
-                </figure>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-<div class="lightbox-overlay" id="galleryLightbox" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="lightbox-inner">
-        <button class="lightbox-close" type="button" aria-label="Close gallery viewer">&times;</button>
-        <img src="" alt="" loading="lazy">
-        <p class="lightbox-caption"></p>
-    </div>
-</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Gallery category filter
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryCards = document.querySelectorAll('.gallery-card');
+
+    if (filterBtns.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+
+                galleryCards.forEach(card => {
+                    if (filter === 'all' || 
+                        card.dataset.category === filter) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    }
+});
+</script>
+
 <?php include 'includes/footer.php'; ?>

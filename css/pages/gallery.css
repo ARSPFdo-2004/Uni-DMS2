@@ -1,91 +1,287 @@
-/* Gallery and lightbox styling */
-.gallery-wrapper {
-    padding-top: var(--space-12);
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GALLERY SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-section {
+  background: #F5F3EE;     /* warm off-white — matches reference */
+  min-height: 100vh;
+  padding-top: 48px;
+  padding-bottom: 80px;
 }
+
+.gallery-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 5vw, 60px);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HEADING — matches reference "— GALLERY" style
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.gallery-dash {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #0F172A;
+  line-height: 1;
+}
+
+.gallery-title {
+  font-family: inherit;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0F172A;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FILTER BAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.filter-btn {
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #CBD2E1;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  border-color: #0F172A;
+  color: #0F172A;
+}
+
+.filter-btn.active {
+  background: #0F172A;
+  border-color: #0F172A;
+  color: #F5F3EE;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRID — 3 equal columns, tight gap
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CARD BASE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 .gallery-card {
-    position: relative;
-    border-radius: var(--radius-xl);
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid var(--light-200);
-    box-shadow: var(--shadow-light-sm);
+  position: relative;
+  aspect-ratio: 4 / 3;   /* all cards exactly same ratio */
+  overflow: hidden;
+  cursor: pointer;
+  background: #1a1a1a;
+  /* NO border-radius — matches reference */
+  border-radius: 4px;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MEDIA WRAPPER — contains img + reflection
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── IMAGE ── */
 .gallery-card img {
-    width: 100%;
-    height: 240px;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center center;
 }
 
-.gallery-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: var(--space-4);
-    background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.85));
-    color: white;
-    font-size: var(--text-sm);
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HOVER — ZOOM EFFECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card:hover img {
+  transform: scale(1.08);
 }
 
-.lightbox-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(8, 12, 20, 0.85);
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HOVER — REFLECTION / SHEEN EFFECT
+  
+   A diagonal light sheen sweeps across 
+   the image on hover — like a glass 
+   reflection moving left to right.
+   Pure CSS — no JS needed.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent     30%,
+    rgba(255,255,255,0.18) 50%,
+    transparent     70%
+  );
+  z-index: 2;
+  pointer-events: none;
+  transform: skewX(-15deg);
+  transition: left 0s;   /* instant reset */
+}
+
+.gallery-card:hover::before {
+  left: 160%;
+  transition: left 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HOVER — SUBTLE BRIGHTNESS LIFT
+   Mimics the "lit" feel of the reference
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gallery-card:hover .gallery-card__media::after {
+  background: rgba(255,255,255,0.06);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GRADIENT OVERLAY — always on, 
+   stronger at bottom for caption legibility
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card__reflection {
+  display: none;   /* unused — reflection is CSS ::before */
+}
+
+.gallery-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.20) 35%,
+    rgba(0, 0, 0, 0.00) 65%
+  );
+  z-index: 1;
+  pointer-events: none;
+  /* Deepens slightly on hover */
+  transition: opacity 0.4s ease;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CAPTION — bottom-left, reference style
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card__caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+
+  /* Subtle slide-up on hover */
+  transform: translateY(3px);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-card:hover .gallery-card__caption {
+  transform: translateY(0);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HIDDEN — for filter JS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.gallery-card.hidden {
+  display: none;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@media (max-width: 900px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+  }
+}
+
+@media (max-width: 500px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .gallery-card {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+/* Touch devices — disable hover transforms */
+@media (hover: none) {
+  .gallery-card:hover img {
+    transform: scale(1);
+  }
+  .gallery-card::before {
     display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1200;
-    padding: var(--space-6);
+  }
 }
 
-.lightbox-overlay.is-open {
-    display: flex;
-}
-
-.lightbox-inner {
-    position: relative;
-    max-width: 800px;
-    width: 100%;
-}
-
-.lightbox-inner img {
-    width: 100%;
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-dark-lg);
-}
-
-.lightbox-close {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    background: rgba(15, 23, 42, 0.7);
-    border: none;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    box-shadow: var(--shadow-dark-md);
-}
-
-.lightbox-caption {
-    margin-top: var(--space-4);
-    color: white;
-    text-align: center;
-}
-
-@media (max-width: var(--bp-md)) {
-    .lightbox-inner img {
-        border-radius: var(--radius-lg);
-    }
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-card img,
+  .gallery-card::before,
+  .gallery-card__caption {
+    transition: none !important;
+    transform: none !important;
+  }
 }
